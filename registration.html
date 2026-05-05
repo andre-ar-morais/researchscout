@@ -434,40 +434,12 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 4
       <!-- Delivery scope removed to reduce decision friction -->
     </div>
 
-    <!-- ══ 3. KEYWORDS ══ -->
-    <div class="section-label" id="global-kw-section-label">
-      <div class="section-num">3</div>
-      <div class="section-title">Keyword Filters</div>
-      <div class="section-line"></div>
-    </div>
-    <div id="global-kw-section">
-    <div class="form-grid">
-      <div class="field full">
-        <label>
-          Keywords of Interest <span class="req">*</span>
-          <span class="lim" id="kw-limit-label"></span>
-        </label>
-        <div class="tag-wrap" id="kw-wrap" onclick="document.getElementById('kw-input').focus()">
-          <input class="tag-input" id="kw-input" placeholder="Type a keyword and press Enter or comma…" maxlength="60">
-        </div>
-        <div class="tag-counter" id="kw-counter">0 keywords</div>
-        <span class="hint">Articles whose titles contain any of these words will be prioritised. Press <strong>Enter</strong> or <strong>,</strong> to add each keyword.</span>
-      </div>
-      <div class="field full">
-        <label>Keyword Blacklist <span style="font-weight:300;text-transform:none;font-size:11px;letter-spacing:0">(optional)</span></label>
-        <div class="tag-wrap" id="bl-wrap" onclick="document.getElementById('bl-input').focus()">
-          <input class="tag-input" id="bl-input" placeholder="Type a word to exclude and press Enter or comma…" maxlength="60">
-        </div>
-        <div class="tag-counter" id="bl-counter">0 excluded</div>
-        <span class="hint">Articles whose titles contain these words will never appear, regardless of other settings.</span>
-      </div>
-    </div>
-    </div>
 
 
-    <!-- ══ 4. JOURNALS ══ -->
+
+    <!-- ══ 3. JOURNALS ══ -->
     <div class="section-label">
-      <div class="section-num">4</div>
+      <div class="section-num">3</div>
       <div class="section-title">Journals in Your Selection <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:11px">(optional)</span></div>
       <div class="section-line"></div>
     </div>
@@ -512,6 +484,35 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 4
     </div>
 
 
+    <!-- ══ 4. KEYWORDS ══ -->
+    <div class="section-label" id="global-kw-section-label">
+      <div class="section-num">4</div>
+      <div class="section-title">Keyword Filters</div>
+      <div class="section-line"></div>
+    </div>
+    <div id="global-kw-section">
+    <div class="form-grid">
+      <div class="field full">
+        <label>
+          Keywords of Interest <span class="req">*</span>
+          <span class="lim" id="kw-limit-label"></span>
+        </label>
+        <div class="tag-wrap" id="kw-wrap" onclick="document.getElementById('kw-input').focus()">
+          <input class="tag-input" id="kw-input" placeholder="Type a keyword and press Enter or comma…" maxlength="60">
+        </div>
+        <div class="tag-counter" id="kw-counter">0 keywords</div>
+        <span class="hint">Articles whose titles contain any of these words will be prioritised. Press <strong>Enter</strong> or <strong>,</strong> to add each keyword.</span>
+      </div>
+      <div class="field full">
+        <label>Keyword Blacklist <span style="font-weight:300;text-transform:none;font-size:11px;letter-spacing:0">(optional)</span></label>
+        <div class="tag-wrap" id="bl-wrap" onclick="document.getElementById('bl-input').focus()">
+          <input class="tag-input" id="bl-input" placeholder="Type a word to exclude and press Enter or comma…" maxlength="60">
+        </div>
+        <div class="tag-counter" id="bl-counter">0 excluded</div>
+        <span class="hint">Articles whose titles contain these words will never appear, regardless of other settings.</span>
+      </div>
+    </div>
+    </div>
     
     <!-- SUBMIT -->
     <div class="submit-row">
