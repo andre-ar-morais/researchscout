@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Scout · Subscriber Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nunito+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:   #f5f0e8;
+  --white:   #1c1a17;
+  --cream:   #eae4d8;
+  --gold:    #8a6500;
+  --gold-lt: #5c4200;
+  --ink:     #ffffff;
+  --muted:   #7a7265;
+  --border:  rgba(120,95,20,0.2);
+  --accent:  #b83020;
+  --accent-soft: rgba(184,48,32,0.08);
+  --green:   #2d6a4f;
+  --green-bg:#eaf3ee;
+  --serif:   'Spectral', Georgia, serif;
+  --sans:    'Nunito Sans', sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:var(--sans);font-weight:300;min-height:100vh}
+
+/* noise */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.01;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px 200px}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 48px;
+  border-bottom:1px solid var(--border);background:rgba(245,240,232,.97);
+  backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
+.nav-logo{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--gold);text-decoration:none;letter-spacing:.04em}
+.nav-logo span{color:var(--white);font-weight:300}
+.nav-back{font-size:13px;color:rgba(247,244,239,.5);text-decoration:none;
+  display:flex;align-items:center;gap:8px;transition:color .2s}
+.nav-back:hover{color:var(--gold)}
+
+/* PLAN BANNER */
+.plan-banner{padding:14px 48px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.plan-banner.essential{background:rgba(201,168,76,.06)}
+.plan-banner.professional{background:rgba(45,106,79,.08)}
+.plan-pill{display:inline-flex;align-items:center;gap:8px;
+  font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+.plan-pill .dot{width:8px;height:8px;border-radius:50%}
+.plan-banner.essential .dot{background:var(--gold)}
+.plan-banner.professional .dot{background:#4caf7d}
+.plan-limits{font-size:12px;color:var(--muted);display:flex;gap:20px;flex-wrap:wrap}
+.plan-limits span{display:flex;align-items:center;gap:5px}
+.plan-limits strong{color:var(--white)}
+
+/* CONTAINER */
+.container{max-width:760px;margin:0 auto;padding:48px 24px 100px}
+
+/* LOADING */
+#loading-overlay{position:fixed;inset:0;background:var(--black);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:200;gap:20px;transition:opacity .4s}
+#loading-overlay.hidden{opacity:0;pointer-events:none}
+.spinner{width:36px;height:36px;border:2px solid var(--border);
+  border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;color:var(--muted);letter-spacing:.08em}
+
+/* SECTION HEADERS */
+.section-label{display:flex;align-items:center;gap:12px;margin-bottom:24px;margin-top:48px}
+.section-label:first-of-type{margin-top:0}
+.section-num{width:28px;height:28px;background:rgba(138,101,0,.12);border:1px solid var(--border);
+  color:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:600;flex-shrink:0}
+.section-title{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--white)}
+.section-line{flex:1;height:1px;background:var(--border)}
+
+/* FORM GRID */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.form-grid .full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.field label .req{color:var(--accent);margin-left:2px}
+.field label .lim{font-size:10px;color:var(--gold);margin-left:6px;letter-spacing:.06em;text-transform:none;font-weight:400}
+.field input,.field select{
+  background:#ffffff;border:1px solid var(--border);border-radius:5px;
+  padding:11px 14px;font-family:var(--sans);font-size:14px;font-weight:300;
+  color:var(--white);transition:border-color .2s,box-shadow .2s;appearance:none;width:100%}
+.field option{color:rgba(28,26,23,.9);background:#ffffff;}
+.field select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6560' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.field input:focus,.field select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.field input:disabled,.field select:disabled{opacity:.4;cursor:not-allowed}
+.field .hint{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* MULTI-SELECT PANEL */
+.multi-panel{background:#ffffff;border:1px solid var(--border);border-radius:5px;overflow:hidden;transition:border-color .2s}
+.multi-panel:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.multi-panel.disabled{opacity:.4;pointer-events:none}
+.multi-search{border:none;border-bottom:1px solid var(--border);width:100%;padding:9px 14px;
+  font-family:var(--sans);font-size:13px;font-weight:300;color:var(--white);
+  background:#ffffff;outline:none}
+.multi-search::placeholder{color:var(--muted)}
+.multi-list{max-height:190px;overflow-y:auto;padding:4px 0}
+.multi-list::-webkit-scrollbar{width:4px}
+.multi-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.multi-option{display:flex;align-items:center;gap:10px;padding:7px 14px;cursor:pointer;font-size:13px;transition:background .12s;user-select:none}
+.multi-option:hover{background:rgba(201,168,76,.07)}
+.multi-option.selected{background:rgba(138,101,0,.1);border-left:3px solid var(--gold);}
+.multi-option.hidden{display:none}
+.multi-option input[type=checkbox]{
+  appearance:none;-webkit-appearance:none;
+  width:16px;height:16px;flex-shrink:0;cursor:pointer;
+  border:1.5px solid rgba(120,95,20,0.4);border-radius:3px;
+  background:#fff;transition:all .15s;position:relative;
+}
+.multi-option input[type=checkbox]:checked{
+  background:var(--gold);border-color:var(--gold);
+}
+.multi-option input[type=checkbox]:checked::after{
+  content:'';position:absolute;
+  left:50%;top:50%;
+  width:4px;height:8px;
+  border:2px solid #fff;border-top:none;border-left:none;
+  transform:translate(-50%,-60%) rotate(45deg);
+  display:block;
+}
+.multi-option span{line-height:1.3;color:rgba(28,26,23,.85)}
+.multi-empty{padding:14px;font-size:13px;color:var(--muted);text-align:center;display:none;background:#ffffff}
+.multi-count{font-size:11px;color:var(--muted);text-align:right;margin-top:4px}
+.multi-count.warn{color:var(--accent)}
+.multi-count.at-limit{color:var(--gold)}
+
+/* BADGES */
+.badges-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;min-height:4px}
+.badge{display:inline-flex;align-items:center;gap:5px;border-radius:4px;
+  padding:3px 9px;font-size:11px;font-weight:500;animation:badgeIn .15s ease}
+.badge.subfield{background:rgba(138,101,0,.1);border:1px solid rgba(138,101,0,.3);color:rgba(28,26,23,.8)}
+.badge.topic{background:rgba(100,80,20,.1);border:1px solid rgba(138,101,0,.3);color:rgba(28,26,23,.8)}
+.badge.journal-wl{background:rgba(45,106,79,.12);border:1px solid rgba(45,106,79,.35);color:#1a5c35}
+.badge.journal-bl{background:rgba(192,57,43,.12);border:1px solid rgba(192,57,43,.35);color:#8b1a0a}
+@keyframes badgeIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.badge-remove{background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;padding:0;font-size:13px;line-height:1;display:flex;align-items:center}
+.badge-remove:hover{color:rgba(255,255,255,.8)}
+.badges-empty{font-size:12px;color:var(--muted);font-style:italic}
+
+/* JOURNALS SECTION */
+.journal-panel{background:#ffffff;border:1px solid var(--border);border-radius:5px;overflow:hidden}
+.journal-panel-header{padding:10px 14px;background:rgba(138,101,0,.05);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.journal-panel-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.journal-panel-count{font-size:11px;color:var(--gold)}
+.journal-search{border:none;border-bottom:1px solid var(--border);width:100%;padding:9px 14px;
+  font-family:var(--sans);font-size:13px;color:rgba(28,26,23,.85);background:transparent;outline:none}
+.journal-search::placeholder{color:var(--muted)}
+.journal-list{max-height:220px;overflow-y:auto;padding:4px 0}
+.journal-list::-webkit-scrollbar{width:4px}
+.journal-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.journal-item{display:flex;align-items:center;justify-content:space-between;
+  padding:7px 14px;font-size:13px;color:rgba(28,26,23,.7);
+  border-bottom:1px solid rgba(201,168,76,.05);gap:10px}
+.journal-item:last-child{border-bottom:none}
+.journal-item.hidden{display:none}
+.journal-item-name{flex:1;line-height:1.4}
+.journal-item-actions{display:flex;gap:6px;flex-shrink:0}
+.btn-jrn{border:none;padding:3px 9px;border-radius:3px;font-size:11px;font-weight:600;
+  letter-spacing:.06em;cursor:pointer;transition:all .15s;font-family:var(--sans)}
+.btn-jrn-wl{background:rgba(45,106,79,.2);color:#a8d5b5;border:1px solid rgba(45,106,79,.3)}
+.btn-jrn-wl:hover{background:rgba(45,106,79,.35)}
+.btn-jrn-bl{background:rgba(192,57,43,.15);color:#e8a090;border:1px solid rgba(192,57,43,.3)}
+.btn-jrn-bl:hover{background:rgba(192,57,43,.3)}
+.btn-jrn.active-wl{background:rgba(45,106,79,.5);color:white}
+.btn-jrn.active-bl{background:rgba(192,57,43,.5);color:white}
+.journal-empty{padding:16px;text-align:center;font-size:13px;color:var(--muted)}
+
+/* TAG INPUT */
+.tag-wrap{background:#ffffff;border:1px solid var(--border);border-radius:5px;
+  padding:8px 10px;min-height:48px;cursor:text;transition:border-color .2s,box-shadow .2s;
+  display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start}
+.tag-wrap:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.kw-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(138,101,0,.12);
+  border:1px solid rgba(201,168,76,.3);color:var(--gold-lt);
+  border-radius:4px;padding:3px 9px;font-size:12px;animation:badgeIn .15s ease}
+.kw-tag.blacklist{background:rgba(192,57,43,.15);border-color:rgba(192,57,43,.3);color:#e8a090}
+.kw-tag .tag-remove{background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;
+  padding:0;font-size:13px;line-height:1;display:flex;align-items:center}
+.kw-tag .tag-remove:hover{color:rgba(255,255,255,.8)}
+.tag-input{border:none;outline:none;font-family:var(--sans);font-size:13px;font-weight:300;
+  color:rgba(28,26,23,.85);background:transparent;flex:1;min-width:120px;padding:3px 4px}
+.tag-counter{font-size:11px;color:var(--muted);text-align:right;margin-top:4px}
+.tag-counter.warn{color:var(--accent)}
+.tag-counter.at-limit{color:var(--gold)}
+
+/* RADIO CARDS */
+.radio-group{display:flex;gap:10px;flex-wrap:wrap}
+.radio-card{flex:1;min-width:110px}
+.radio-card input[type=radio]{display:none}
+.radio-card label{display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:14px 10px;background:#ffffff;border:1.5px solid var(--border);
+  border-radius:6px;cursor:pointer;transition:all .2s;text-align:center;
+  font-size:13px;font-weight:400;color:rgba(247,244,239,.7)}
+.radio-card input:checked+label{border-color:var(--gold);background:rgba(138,101,0,.07);color:var(--gold)}
+.radio-card .radio-icon{font-size:20px}
+.radio-card .radio-desc{font-size:11px;color:var(--muted)}
+.radio-card input:checked+label .radio-desc{color:rgba(201,168,76,.7)}
+.radio-card.disabled label{opacity:.35;cursor:not-allowed;pointer-events:none}
+
+/* UPDATE NOTICE */
+.update-notice{background:rgba(45,106,79,.08);border:1px solid rgba(45,106,79,.3);
+  border-radius:6px;padding:14px 18px;font-size:13px;color:#a8d5b5;line-height:1.6;margin-bottom:32px}
+.update-notice strong{font-weight:600;color:#c8e6c9}
+
+/* MODE TOGGLE */
+.mode-banner{background:#ffffff;border-bottom:1px solid var(--border);
+  padding:12px 24px;display:flex;align-items:center;justify-content:center;gap:12px;font-size:13px;color:var(--muted)}
+.mode-toggle{display:flex;background:#ffffff;border:1px solid var(--border);border-radius:5px;overflow:hidden}
+.mode-btn{padding:6px 16px;font-size:12px;font-weight:500;font-family:var(--sans);
+  border:none;background:transparent;cursor:pointer;color:var(--muted);transition:all .2s;letter-spacing:.04em}
+.mode-btn.active{background:var(--gold);color:var(--black)}
+
+/* SUBMIT */
+.submit-row{display:flex;align-items:center;gap:16px;margin-top:40px;flex-wrap:wrap}
+.btn-submit{background:var(--gold);color:var(--black);border:none;border-radius:5px;
+  padding:14px 36px;font-family:var(--sans);font-size:13px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .1s}
+.btn-submit:hover{background:var(--gold-lt);transform:translateY(-1px)}
+.btn-submit.update-mode{background:#4caf7d}
+.submit-note{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* SUCCESS */
+#success-msg{display:none;background:rgba(138,101,0,.07);border:1px solid var(--border);
+  border-radius:10px;padding:40px;text-align:center;margin-top:32px}
+#success-msg h2{font-family:var(--serif);font-size:28px;font-weight:300;margin-bottom:10px}
+#success-msg p{font-size:14px;color:var(--muted)}
+
+@media(max-width:700px){
+  nav{padding:14px 20px}
+  .plan-banner{padding:12px 20px}
+  .container{padding:32px 16px 80px}
+  .section-label{margin-top:36px}
+  .form-grid{grid-template-columns:1fr}
+  .form-grid .full{grid-column:1}
+  .radio-group{flex-direction:column}
+  .journal-panel-header{flex-direction:column;align-items:flex-start}
+  .plan-limits{gap:12px}
+  #submit-btn{width:100%;text-align:center}
+  .badge{font-size:10px;padding:3px 7px}
+  .multi-list{max-height:220px}
+  .journal-item{flex-wrap:wrap;gap:6px}
+  .journal-item-actions{width:100%;justify-content:flex-end}
+}
+</style>
+  <!-- ═══ SECURITY ═══ -->
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; frame-ancestors 'none';">  <meta http-equiv="X-Content-Type-Options" content="nosniff"> -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://*.workers.dev https://*.pages.dev; img-src 'self' data:; frame-ancestors 'none';">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+  <!-- Runtime config: sets FORM_API_URL and SECRET_TOKEN -->
+  <script src="runtime-config.js"></script>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Loading field taxonomy…</div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">Research<span>Scout</span></a>
+  <a class="nav-back" href="index.html">← Back to home</a>
+</nav>
+
+<!-- PLAN BANNER (populated by JS) -->
+<div class="plan-banner" id="plan-banner">
+  <div class="plan-pill" id="plan-pill">
+    <div class="dot"></div>
+    <span id="plan-pill-text">Loading plan…</span>
+  </div>
+  <div class="plan-limits" id="plan-limits"></div>
+</div>
+
+<!-- MODE TOGGLE -->
+<div class="mode-banner">
+  <span>Form mode:</span>
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="btn-new" onclick="setMode('new')">New Registration</button>
+    <button class="mode-btn" id="btn-update" onclick="setMode('update')">Update Preferences</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <div id="update-notice" class="update-notice" style="display:none">
+    <strong>Updating your preferences?</strong> Enter your registered e-mail below. All fields reflect your current settings — change what you need and resubmit. Your previous selections will be replaced.
+  </div>
+
+  <form id="reg-form" name="subscriber-profile" method="POST" novalidate>
+  <input type="hidden" name="form-name" value="subscriber-profile" />
+
+    <!-- ══ 1. PERSONAL ══ -->
+    <div class="section-label">
+      <div class="section-num">1</div>
+      <div class="section-title">Personal Information</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="form-grid">
+      <div class="field full">
+        <label>Full Name <span class="req">*</span></label>
+        <!--<input type="text" id="name" placeholder="e.g. Maria Oliveira" required>-->
+		<input type="text" id="name" name="name" placeholder="e.g. John Smith" required>
+      </div>
+      <div class="field full">
+        <label>E-mail Address <span class="req">*</span></label>
+        <!--<input type="email" id="email" placeholder="your@email.com" required> -->
+		<input type="email" id="email" name="email" placeholder="your@email.com" required>
+        <span class="hint">Use the same e-mail you used on the payment page. This is your account identifier.</span>
+      </div>
+      <div class="field">
+        <label>Country <span class="req">*</span></label>
+        <!--<select id="country" required>-->
+		<select id="country" name="country" required>
+          <option value="">Select country…</option>
+          <option>Argentina</option><option>Australia</option><option>Austria</option>
+          <option>Bangladesh</option><option>Belgium</option><option>Bolivia</option>
+          <option>Brazil</option><option>Canada</option><option>Chile</option>
+          <option>China</option><option>Colombia</option><option>Denmark</option>
+          <option>Ecuador</option><option>Egypt</option><option>Finland</option>
+          <option>France</option><option>Germany</option><option>Ghana</option>
+          <option>Greece</option><option>Hungary</option><option>India</option>
+          <option>Indonesia</option><option>Iran</option><option>Ireland</option>
+          <option>Israel</option><option>Italy</option><option>Japan</option>
+          <option>Kenya</option><option>Malaysia</option><option>Mexico</option>
+          <option>Morocco</option><option>Netherlands</option><option>New Zealand</option>
+          <option>Nigeria</option><option>Norway</option><option>Pakistan</option>
+          <option>Peru</option><option>Philippines</option><option>Poland</option>
+          <option>Portugal</option><option>Romania</option><option>Russia</option>
+          <option>Saudi Arabia</option><option>South Africa</option><option>South Korea</option>
+          <option>Spain</option><option>Sweden</option><option>Switzerland</option>
+          <option>Thailand</option><option>Turkey</option><option>Ukraine</option>
+          <option>United Kingdom</option><option>United States</option><option>Uruguay</option>
+          <option>Venezuela</option><option>Vietnam</option><option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Date of Birth</label>
+        <input type="date" id="dob">
+		<!--<input type="date" id="dob" name="dob">-->
+      </div>
+      <div class="field">
+        <label>Education Level <span class="req">*</span></label>
+        <select id="education" required>
+		<!--<select id="education" name="education" required>-->
+          <option value="">Select level…</option>
+          <option>High School</option>
+          <option>Undergraduate (in progress)</option>
+          <option>Undergraduate (completed)</option>
+          <option>Master's (in progress)</option>
+          <option>Master's (completed)</option>
+          <option>PhD (in progress)</option>
+          <option>PhD (completed)</option>
+          <option>Postdoctoral Researcher</option>
+          <option>Researcher / Faculty</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Occupation / Role</label>
+        <!--<input type="text" id="occupation" placeholder="e.g. Professor, PhD Student…">-->
+		<input type="text" id="occupation" name="occupation" placeholder="e.g. Professor, PhD Student…">
+      </div>
+      <div class="field full">
+        <label>Institution / Affiliation</label>
+        <!--<input type="text" id="institution" placeholder="University, company, or independent">-->
+		<input type="text" id="institution" name="institution" placeholder="University, company, or independent">
+      </div>
+    </div>
+
+    <!-- ══ 2. RESEARCH INTEREST ══ -->
+    <div class="section-label">
+      <div class="section-num">2</div>
+      <div class="section-title">Research Interest</div>
+      <div class="section-line"></div>
+    </div>
+
+    <!-- Domain selector (global, essential only) -->
+    <div id="global-domain-block">
+    <div class="form-grid" style="margin-bottom:8px;">
+      <div class="field full">
+        <label>Domain <span class="req">*</span></label>
+        <!--<select id="domain" required onchange="onDomainChange()">-->
+		<select id="domain" name="domain" required onchange="onDomainChange()">
+          <option value="">Select domain…</option>
+        </select>
+        <span class="hint">The broad scientific area you work in.</span>
+      </div>
+    </div>
+    </div>
+
+    <!-- Field slots — rendered dynamically by JS -->
+    <div id="field-slots-wrap"></div>
+
+    <!-- Subfield limit label (hidden, updated by JS) -->
+    <span class="lim" id="subfield-limit-label" style="display:none"></span>
+
+    <!-- Topic input + suggestions (global, across all fields) -->
+    <div class="form-grid" style="margin-top:20px;">
+      <div class="field full">
+        <label>Preferred Topics <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:11px">(optional — your own terms)</span></label>
+        <div class="tag-wrap" id="topic-pref-wrap" onclick="document.getElementById('topic-pref-input').focus()">
+          <input class="tag-input" id="topic-pref-input" placeholder="Type a topic and press Enter or comma…" maxlength="80">
+        </div>
+        <div class="tag-counter" id="topic-pref-counter">0 topics</div>
+        <span class="hint">You can type your own preferences, even if they are not listed in suggestions.</span>
+      </div>
+
+      <div class="field full">
+        <label>Topic Suggestions <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:11px">(optional — from selected field/subfield)</span></label>
+        <div class="multi-panel disabled" id="topic-panel">
+          <input class="multi-search" id="topic-search" placeholder="Search topics…" oninput="filterMulti('topic')" disabled>
+          <div class="multi-list" id="topic-list">
+            <div class="multi-empty" id="topic-empty">Select subfields first.</div>
+          </div>
+        </div>
+        <div class="multi-count" id="topic-count">0 selected</div>
+        <div class="badges-wrap" id="topic-badges"></div>
+      </div>
+
+      <!-- Delivery scope removed to reduce decision friction -->
+    </div>
+
+    <!-- ══ 3. JOURNALS ══ -->
+    <div class="section-label">
+      <div class="section-num">3</div>
+      <div class="section-title">Journals in Your Selection</div>
+      <div class="section-line"></div>
+    </div>
+
+    <div id="journal-placeholder" style="padding:20px;background:#ffffff;border:1px solid var(--border);border-radius:5px;font-size:13px;color:var(--muted);text-align:center;">
+      Select your domain, field, and at least one subfield above to see the journals associated with your choices.
+    </div>
+
+    <div id="journal-section" style="display:none">
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px;">
+        These are the journals currently indexed under your selected topics. You can <span style="color:#a8d5b5">whitelist</span> journals to receive <strong style="color:var(--white)">only</strong> articles from them, or <span style="color:#e8a090">blacklist</span> journals to exclude them entirely. Leave both empty to receive all matching journals.
+      </p>
+
+      <div class="journal-panel">
+        <div class="journal-panel-header">
+          <span class="journal-panel-title">Available Journals</span>
+          <span class="journal-panel-count" id="journal-total-count"></span>
+        </div>
+        <input class="journal-search" id="journal-search" placeholder="Search journals…" oninput="filterJournals()">
+        <div class="journal-list" id="journal-list"></div>
+      </div>
+
+      <!-- Whitelist badges -->
+      <div style="margin-top:20px">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">
+          Whitelisted journals <span style="font-weight:300;text-transform:none;font-size:11px;letter-spacing:0">(receive only these)</span>
+        </div>
+        <div class="badges-wrap" id="whitelist-badges">
+          <span class="badges-empty" id="whitelist-empty">None selected — all journals included.</span>
+        </div>
+      </div>
+
+      <!-- Blacklist badges -->
+      <div style="margin-top:16px">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">
+          Blacklisted journals <span style="font-weight:300;text-transform:none;font-size:11px;letter-spacing:0">(never receive these)</span>
+        </div>
+        <div class="badges-wrap" id="blacklist-badges">
+          <span class="badges-empty" id="blacklist-empty">None excluded.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 4. KEYWORDS ══ -->
+    <div class="section-label" id="global-kw-section-label">
+      <div class="section-num">4</div>
+      <div class="section-title">Keyword Filters</div>
+      <div class="section-line"></div>
+    </div>
+    <div id="global-kw-section">
+    <div class="form-grid">
+      <div class="field full">
+        <label>
+          Keywords of Interest <span class="req">*</span>
+          <span class="lim" id="kw-limit-label"></span>
+        </label>
+        <div class="tag-wrap" id="kw-wrap" onclick="document.getElementById('kw-input').focus()">
+          <input class="tag-input" id="kw-input" placeholder="Type a keyword and press Enter or comma…" maxlength="60">
+        </div>
+        <div class="tag-counter" id="kw-counter">0 keywords</div>
+        <span class="hint">Articles whose titles contain any of these words will be prioritised. Press <strong>Enter</strong> or <strong>,</strong> to add each keyword.</span>
+      </div>
+      <div class="field full">
+        <label>Keyword Blacklist <span style="font-weight:300;text-transform:none;font-size:11px;letter-spacing:0">(optional)</span></label>
+        <div class="tag-wrap" id="bl-wrap" onclick="document.getElementById('bl-input').focus()">
+          <input class="tag-input" id="bl-input" placeholder="Type a word to exclude and press Enter or comma…" maxlength="60">
+        </div>
+        <div class="tag-counter" id="bl-counter">0 excluded</div>
+        <span class="hint">Articles whose titles contain these words will never appear, regardless of other settings.</span>
+      </div>
+    </div>
+    </div>
+
+    
+    <!-- SUBMIT -->
+    <div class="submit-row">
+      <button type="submit" class="btn-submit" id="submit-btn">Register &amp; Subscribe</button>
+      <span class="submit-note">Your data is used exclusively to filter and deliver your digest.<br>Return to this form anytime to update your preferences.</span>
+    </div>
+
+  </form>
+
+  <div id="success-msg">
+    <h2 id="success-title">You're subscribed.</h2>
+    <p id="success-body">Your preferences have been saved. Your first digest will arrive on the next scheduled send.</p>
+  </div>
+
+</div><!-- /container -->
+
+<script src="runtime-config.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════
+// PLAN DETECTION
+// ═══════════════════════════════════════════════════════
+const params  = new URLSearchParams(window.location.search);
+const rawPlan = (params.get('plan') || 'essential').toLowerCase();
+const PLAN    = rawPlan === 'professional' ? 'professional' : 'essential';
+
+const LIMITS = {
+  essential:    { domains: 1, fields: 1, subfields: 3,  keywords: 10, kw_blacklist: 10,   pdf: false },
+  professional: { domains: 3, fields: 1, subfields: 3,  keywords: 15, kw_blacklist: null, pdf: true  }
+};
+const LIM = LIMITS[PLAN];
+
+// Apply plan UI
+const banner = document.getElementById('plan-banner');
+banner.classList.add(PLAN);
+document.getElementById('plan-pill').classList.add(PLAN);
+document.getElementById('plan-pill-text').textContent =
+  PLAN === 'professional' ? 'Professional Plan' : 'Essential Plan';
+document.getElementById('plan-limits').innerHTML = PLAN === 'professional' ? `
+  <span>Domains: <strong>${LIM.domains}</strong></span>
+  <span>Fields/domain: <strong>${LIM.fields}</strong></span>
+  <span>Subfields/domain: <strong>${LIM.subfields}</strong></span>
+  <span>Keywords/domain: <strong>${LIM.keywords}</strong></span>
+  <span>Blacklist: <strong>Unlimited</strong></span>
+  <span>PDF: <strong>Included</strong></span>` : `
+  <span>Domains: <strong>${LIM.domains}</strong></span>
+  <span>Subfields: <strong>${LIM.subfields}</strong></span>
+  <span>Keywords: <strong>${LIM.keywords}</strong></span>
+  <span>Blacklist: <strong>${LIM.kw_blacklist}</strong></span>
+  <span>PDF: <strong>Not included</strong></span>`;
+
+document.getElementById('subfield-limit-label').textContent =
+  `— up to ${LIM.subfields} per field (${LIM.subfields * (PLAN === 'professional' ? LIM.domains : 1)} total on your plan)`;
+document.getElementById('kw-limit-label').textContent =
+  `— up to ${LIM.keywords} on your plan`;
+
+// For Professional: domain selector moves into each slot — hide the global domain block
+if (PLAN === 'professional') {
+  document.getElementById('global-domain-block').style.display = 'none';
+  document.getElementById('global-kw-section').style.display = 'none';
+  document.getElementById('global-kw-section-label').style.display = 'none';
+}
+
+// PDF options handled server-side based on plan
+
+// ═══════════════════════════════════════════════════════
+// HIERARCHY DATA (loaded from hierarchy.json)
+// ═══════════════════════════════════════════════════════
+let H = {};
+
+async function loadHierarchy() {
+  try {
+    const res = await fetch('hierarchy.json');
+    if (!res.ok) throw new Error('File not found');
+    H = await res.json();
+    populateDomains();
+    document.getElementById('loading-overlay').classList.add('hidden');
+  } catch(e) {
+    document.querySelector('.loading-text').textContent = 'Error loading taxonomy. Please refresh.';
+    console.error(e);
+  }
+}
+
+function populateDomains() {
+  // Essential: populate the global domain selector
+  const sel = document.getElementById('domain');
+  Object.keys(H).sort().forEach(d => {
+    const o = document.createElement('option');
+    o.value = o.textContent = d;
+    sel.appendChild(o);
+  });
+
+  // Professional: auto-add the first domain slot on load
+  if (PLAN === 'professional') {
+    addDomainSlot();
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+const state = {
+  subfields: [],
+  topics:    [],
+  journalWL: [],
+  journalBL: []
+};
+
+// ═══════════════════════════════════════════════════════
+// MULTI-FIELD SLOT SYSTEM
+// ═══════════════════════════════════════════════════════
+// Essential: state.fieldSlots = [{field, subfields:[], slotEl}]
+// Professional: state.domainSlots = [{domain, field, subfields:[], keywords:[], slotEl}]
+state.fieldSlots = [];
+state.domainSlots = [];
+
+function onDomainChange() {
+  if (PLAN === 'professional') return; // professional uses per-slot domains
+  const domain = document.getElementById('domain').value;
+  state.fieldSlots = [];
+  state.topics.length = 0;
+  renderFieldSlots();
+  resetMulti('topic');
+  clearJournals();
+  if (domain) addFieldSlot();
+}
+
+// ── Professional: domain slots ──────────────────────────
+function addDomainSlot() {
+  if (state.domainSlots.length >= LIM.domains) return;
+  state.domainSlots.push({ domain: '', field: '', subfields: [], keywords: [], kw_blacklist: [] });
+  renderDomainSlots();
+}
+
+function removeDomainSlot(index) {
+  state.domainSlots.splice(index, 1);
+  state.topics.length = 0;
+  renderDomainSlots();
+  rebuildTopics();
+  rebuildJournals();
+}
+
+function renderDomainSlots() {
+  const wrap = document.getElementById('field-slots-wrap');
+  wrap.innerHTML = '';
+
+  state.domainSlots.forEach((slot, idx) => {
+    const box = document.createElement('div');
+    box.className = 'field-slot-box';
+    box.style.cssText = 'border:1px solid var(--border);border-radius:6px;padding:20px 24px;margin-bottom:12px;background:#ffffff;';
+
+    // Header
+    const header = document.createElement('div');
+    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;';
+    const slotTitle = document.createElement('span');
+    slotTitle.style.cssText = 'font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);';
+    slotTitle.textContent = `Domain Selection ${idx + 1} of ${LIM.domains}`;
+    header.appendChild(slotTitle);
+    if (state.domainSlots.length > 1) {
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button'; removeBtn.textContent = '✕ Remove';
+      removeBtn.style.cssText = 'border:none;background:none;font-size:12px;color:var(--muted);cursor:pointer;font-family:var(--sans);';
+      removeBtn.onmouseover = () => removeBtn.style.color = 'var(--accent)';
+      removeBtn.onmouseout  = () => removeBtn.style.color = 'var(--muted)';
+      removeBtn.onclick = () => removeDomainSlot(idx);
+      header.appendChild(removeBtn);
+    }
+    box.appendChild(header);
+
+    // Domain selector
+    const domainWrap = document.createElement('div');
+    domainWrap.className = 'field';
+    domainWrap.style.marginBottom = '16px';
+    const domainLabel = document.createElement('label');
+    domainLabel.textContent = 'Domain';
+    domainLabel.style.cssText = 'font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;';
+    const domainSel = document.createElement('select');
+    domainSel.style.cssText = 'width:100%;background:#ffffff;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:var(--sans);font-size:14px;color:rgba(28,26,23,.9);appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'8\' viewBox=\'0 0 12 8\'%3E%3Cpath d=\'M1 1l5 5 5-5\' stroke=\'%236b6560\' stroke-width=\'1.5\' fill=\'none\' stroke-linecap=\'round\'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;';
+    domainSel.innerHTML = '<option value="">Select domain…</option>';
+    Object.keys(H).sort().forEach(d => {
+      const o = document.createElement('option');
+      o.value = o.textContent = d;
+      if (d === slot.domain) o.selected = true;
+      domainSel.appendChild(o);
+    });
+    domainSel.onchange = () => {
+      slot.domain = domainSel.value;
+      slot.field = '';
+      slot.subfields = [];
+      renderDomainSlots();
+      rebuildTopics();
+      rebuildJournals();
+    };
+    const domainHint = document.createElement('span');
+    domainHint.className = 'hint';
+    domainHint.textContent = 'The broad scientific area for this selection.';
+    domainWrap.appendChild(domainLabel);
+    domainWrap.appendChild(domainSel);
+    domainWrap.appendChild(domainHint);
+    box.appendChild(domainWrap);
+
+    // Field selector
+    const fieldWrap = document.createElement('div');
+    fieldWrap.className = 'field';
+    fieldWrap.style.marginBottom = '16px';
+    const fieldLabel = document.createElement('label');
+    fieldLabel.textContent = 'Field';
+    fieldLabel.style.cssText = 'font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;';
+    const fieldSel = document.createElement('select');
+    fieldSel.style.cssText = domainSel.style.cssText;
+    fieldSel.innerHTML = '<option value="">Select field…</option>';
+    fieldSel.disabled = !slot.domain;
+    if (slot.domain && H[slot.domain]) {
+      Object.keys(H[slot.domain]).sort().forEach(f => {
+        const o = document.createElement('option');
+        o.value = o.textContent = f;
+        if (f === slot.field) o.selected = true;
+        fieldSel.appendChild(o);
+      });
+    }
+    fieldSel.onchange = () => {
+      slot.field = fieldSel.value;
+      slot.subfields = [];
+      renderSlotSubfields(slot, subfieldWrap, subfieldPanel, subfieldList, subfieldCount, subfieldBadges, idx);
+      rebuildTopics();
+      rebuildJournals();
+    };
+    fieldWrap.appendChild(fieldLabel);
+    fieldWrap.appendChild(fieldSel);
+    box.appendChild(fieldWrap);
+
+    // Subfields
+    const subfieldWrap = document.createElement('div');
+    subfieldWrap.className = 'field';
+    const subfieldLabel = document.createElement('label');
+    subfieldLabel.style.cssText = 'font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;';
+    subfieldLabel.textContent = `Subfields — up to ${LIM.subfields}`;
+    const subfieldPanel = document.createElement('div');
+    subfieldPanel.className = 'multi-panel' + (slot.field ? '' : ' disabled');
+    const sfSearch = document.createElement('input');
+    sfSearch.className = 'multi-search';
+    sfSearch.placeholder = 'Search subfields…';
+    sfSearch.disabled = !slot.field;
+    const subfieldList = document.createElement('div');
+    subfieldList.className = 'multi-list';
+    const sfEmpty = document.createElement('div');
+    sfEmpty.className = 'multi-empty';
+    sfEmpty.textContent = 'Select a field first.';
+    sfEmpty.style.display = 'none';
+    subfieldList.appendChild(sfEmpty);
+    subfieldPanel.appendChild(sfSearch);
+    subfieldPanel.appendChild(subfieldList);
+    const subfieldCount = document.createElement('div');
+    subfieldCount.className = 'multi-count';
+    subfieldCount.textContent = '0 selected';
+    const subfieldBadges = document.createElement('div');
+    subfieldBadges.className = 'badges-wrap';
+    sfSearch.oninput = () => {
+      const q = sfSearch.value.toLowerCase();
+      subfieldList.querySelectorAll('.multi-option').forEach(o => {
+        o.classList.toggle('hidden', !o.dataset.value.toLowerCase().includes(q));
+      });
+    };
+    subfieldWrap.appendChild(subfieldLabel);
+    subfieldWrap.appendChild(subfieldPanel);
+    subfieldWrap.appendChild(subfieldCount);
+    subfieldWrap.appendChild(subfieldBadges);
+    box.appendChild(subfieldWrap);
+
+    // Keywords (per domain slot)
+    const KW_SLOT_MAX = LIM.keywords;
+    if (!slot.keywords) slot.keywords = [];
+    const kwField = document.createElement('div');
+    kwField.className = 'field';
+    kwField.style.marginTop = '16px';
+    const kwLabel = document.createElement('label');
+    kwLabel.style.cssText = 'font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;';
+    kwLabel.innerHTML = `Keywords for this domain <span style="color:var(--gold);font-size:10px;font-weight:400;letter-spacing:.04em;text-transform:none">— up to ${KW_SLOT_MAX}</span>`;
+    const kwTagWrap = document.createElement('div');
+    kwTagWrap.className = 'tag-wrap';
+    const kwInput = document.createElement('input');
+    kwInput.className = 'tag-input';
+    kwInput.placeholder = 'Type a keyword and press Enter or comma…';
+    kwInput.maxLength = 60;
+    kwTagWrap.onclick = () => kwInput.focus();
+    const kwCounter = document.createElement('div');
+    kwCounter.className = 'tag-counter';
+
+    function renderSlotKw() {
+      kwTagWrap.querySelectorAll('.kw-tag').forEach(t => t.remove());
+      slot.keywords.forEach((tag, i) => {
+        const el = document.createElement('span');
+        el.className = 'kw-tag';
+        el.innerHTML = `${tag} <button type="button" class="tag-remove" data-i="${i}">×</button>`;
+        kwTagWrap.insertBefore(el, kwInput);
+      });
+      kwCounter.textContent = `${slot.keywords.length} / ${KW_SLOT_MAX} keywords`;
+      kwCounter.className = 'tag-counter' + (slot.keywords.length >= KW_SLOT_MAX ? ' at-limit' : '');
+    }
+    function addSlotKw(val) {
+      val = val.trim().toLowerCase().replace(/,/g, '');
+      if (!val || slot.keywords.includes(val) || slot.keywords.length >= KW_SLOT_MAX) return;
+      slot.keywords.push(val); renderSlotKw();
+    }
+    kwTagWrap.addEventListener('click', e => {
+      const btn = e.target.closest('.tag-remove');
+      if (!btn) return;
+      slot.keywords.splice(+btn.dataset.i, 1); renderSlotKw();
+    });
+    kwInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addSlotKw(kwInput.value); kwInput.value = ''; }
+      else if (e.key === 'Backspace' && !kwInput.value && slot.keywords.length) { slot.keywords.pop(); renderSlotKw(); }
+    });
+    kwInput.addEventListener('blur', () => { if (kwInput.value.trim()) { addSlotKw(kwInput.value); kwInput.value = ''; } });
+    kwTagWrap.appendChild(kwInput);
+    renderSlotKw();
+    kwField.appendChild(kwLabel);
+    kwField.appendChild(kwTagWrap);
+    kwField.appendChild(kwCounter);
+    box.appendChild(kwField);
+
+    // Keyword Blacklist (per domain slot)
+    if (!slot.kw_blacklist) slot.kw_blacklist = [];
+    const blField = document.createElement('div');
+    blField.className = 'field';
+    blField.style.marginTop = '12px';
+    const blLabel = document.createElement('label');
+    blLabel.style.cssText = 'font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;';
+    blLabel.innerHTML = `Keyword Blacklist for this domain <span style="color:var(--muted);font-size:10px;font-weight:400;letter-spacing:.04em;text-transform:none">— optional</span>`;
+    const blTagWrap = document.createElement('div');
+    blTagWrap.className = 'tag-wrap';
+    blTagWrap.style.cssText = 'background:#ffffff;border:1px solid rgba(192,57,43,0.25);border-radius:5px;padding:8px 10px;min-height:44px;cursor:text;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;';
+    blTagWrap.onfocus = () => blTagWrap.style.borderColor = 'rgba(192,57,43,0.5)';
+    const blInput = document.createElement('input');
+    blInput.className = 'tag-input';
+    blInput.placeholder = 'Type a word to exclude and press Enter or comma…';
+    blInput.maxLength = 60;
+    blTagWrap.onclick = () => blInput.focus();
+    const blCounter = document.createElement('div');
+    blCounter.className = 'tag-counter';
+
+    function renderSlotBl() {
+      blTagWrap.querySelectorAll('.kw-tag').forEach(t => t.remove());
+      slot.kw_blacklist.forEach((tag, i) => {
+        const el = document.createElement('span');
+        el.className = 'kw-tag blacklist';
+        el.innerHTML = `${tag} <button type="button" class="tag-remove" data-i="${i}">×</button>`;
+        blTagWrap.insertBefore(el, blInput);
+      });
+      blCounter.textContent = `${slot.kw_blacklist.length} excluded`;
+      blCounter.className = 'tag-counter' + (slot.kw_blacklist.length > 0 ? '' : '');
+    }
+    function addSlotBl(val) {
+      val = val.trim().toLowerCase().replace(/,/g, '');
+      if (!val || slot.kw_blacklist.includes(val)) return;
+      slot.kw_blacklist.push(val); renderSlotBl();
+    }
+    blTagWrap.addEventListener('click', e => {
+      const btn = e.target.closest('.tag-remove');
+      if (!btn) return;
+      slot.kw_blacklist.splice(+btn.dataset.i, 1); renderSlotBl();
+    });
+    blInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addSlotBl(blInput.value); blInput.value = ''; }
+      else if (e.key === 'Backspace' && !blInput.value && slot.kw_blacklist.length) { slot.kw_blacklist.pop(); renderSlotBl(); }
+    });
+    blInput.addEventListener('blur', () => { if (blInput.value.trim()) { addSlotBl(blInput.value); blInput.value = ''; } });
+    blTagWrap.appendChild(blInput);
+    renderSlotBl();
+    blField.appendChild(blLabel);
+    blField.appendChild(blTagWrap);
+    blField.appendChild(blCounter);
+    box.appendChild(blField);
+
+    slot.slotEl = box;
+    slot._subfieldPanel = subfieldPanel;
+    slot._subfieldList  = subfieldList;
+    slot._subfieldCount = subfieldCount;
+    slot._subfieldBadges = subfieldBadges;
+    slot._sfSearch      = sfSearch;
+    slot._kwInput       = kwInput;
+    slot._blInput       = blInput;
+
+    if (slot.field) {
+      renderSlotSubfields(slot, subfieldWrap, subfieldPanel, subfieldList, subfieldCount, subfieldBadges, idx);
+    }
+    wrap.appendChild(box);
+  });
+
+  // Add domain button
+  if (state.domainSlots.length < LIM.domains) {
+    const addBtn = document.createElement('button');
+    addBtn.type = 'button';
+    addBtn.style.cssText = 'width:100%;padding:12px;border:1px dashed var(--border);border-radius:6px;background:transparent;font-family:var(--sans);font-size:13px;color:var(--muted);cursor:pointer;transition:all .2s;margin-bottom:12px;';
+    addBtn.textContent = `+ Add another domain (${state.domainSlots.length} / ${LIM.domains})`;
+    addBtn.onmouseover = () => { addBtn.style.borderColor = 'var(--gold)'; addBtn.style.color = 'var(--gold)'; };
+    addBtn.onmouseout  = () => { addBtn.style.borderColor = 'var(--border)'; addBtn.style.color = 'var(--muted)'; };
+    addBtn.onclick = addDomainSlot;
+    wrap.appendChild(addBtn);
+  }
+}
+
+// ── Essential: field slots (single domain, multiple fields) ──
+function addFieldSlot() {
+  if (PLAN === 'professional') { addDomainSlot(); return; }
+  const domain = document.getElementById('domain').value;
+  if (!domain) return;
+  if (state.fieldSlots.length >= LIM.fields) return;
+
+  const slotIndex = state.fieldSlots.length;
+  const slot = { field: '', subfields: [], keywords: [] };
+  state.fieldSlots.push(slot);
+  renderFieldSlots();
+}
+
+function removeFieldSlot(index) {
+  if (PLAN === 'professional') { removeDomainSlot(index); return; }
+  state.fieldSlots.splice(index, 1);
+  state.topics.length = 0;
+  renderFieldSlots();
+  rebuildTopics();
+  rebuildJournals();
+}
+
+function renderFieldSlots() {
+  const wrap  = document.getElementById('field-slots-wrap');
+  const domain = document.getElementById('domain').value;
+  wrap.innerHTML = '';
+
+  state.fieldSlots.forEach((slot, idx) => {
+    const box = document.createElement('div');
+    box.className = 'field-slot-box';
+    box.style.cssText = 'border:1px solid var(--border);border-radius:6px;padding:20px 24px;margin-bottom:12px;background:#ffffff;';
+
+    // Header row
+    const header = document.createElement('div');
+    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;';
+    const slotTitle = document.createElement('span');
+    slotTitle.style.cssText = 'font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);';
+    slotTitle.textContent = LIM.fields === 1 ? 'Selection' : `Selection ${idx + 1} of ${LIM.fields}`;
+    header.appendChild(slotTitle);
+
+    if (state.fieldSlots.length > 1) {
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.textContent = '✕ Remove';
+      removeBtn.style.cssText = 'border:none;background:none;font-size:12px;color:var(--muted);cursor:pointer;font-family:var(--sans);';
+      removeBtn.onmouseover = () => removeBtn.style.color = 'var(--accent)';
+      removeBtn.onmouseout  = () => removeBtn.style.color = 'var(--muted)';
+      removeBtn.onclick = () => removeFieldSlot(idx);
+      header.appendChild(removeBtn);
+    }
+    box.appendChild(header);
+
+    // Field selector
+    const fieldWrap = document.createElement('div');
+    fieldWrap.className = 'field';
+    fieldWrap.style.marginBottom = '16px';
+    const fieldLabel = document.createElement('label');
+    fieldLabel.textContent = 'Field';
+    fieldLabel.style.cssText = 'font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;';
+    const fieldSel = document.createElement('select');
+    fieldSel.style.cssText = 'width:100%;background:#ffffff;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:var(--sans);font-size:14px;color:rgba(28,26,23,.9);appearance:none;';
+    fieldSel.innerHTML = '<option value="">Select field…</option>';
+    if (domain && H[domain]) {
+      Object.keys(H[domain]).sort().forEach(f => {
+        const o = document.createElement('option');
+        o.value = o.textContent = f;
+        if (f === slot.field) o.selected = true;
+        fieldSel.appendChild(o);
+      });
+    }
+    fieldSel.onchange = () => {
+      slot.field = fieldSel.value;
+      slot.subfields = [];
+      renderSlotSubfields(slot, subfieldWrap, subfieldPanel, subfieldList, subfieldCount, subfieldBadges, idx);
+      rebuildTopics();
+      rebuildJournals();
+    };
+    fieldWrap.appendChild(fieldLabel);
+    fieldWrap.appendChild(fieldSel);
+    box.appendChild(fieldWrap);
+
+    // Subfield multi
+    const subfieldWrap = document.createElement('div');
+    subfieldWrap.className = 'field';
+    const subfieldLabel = document.createElement('label');
+    const sfLabelText = `Subfield${LIM.subfields > 1 ? 's' : ''} — up to ${LIM.subfields}`;
+    subfieldLabel.style.cssText = 'font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;';
+    subfieldLabel.textContent = sfLabelText;
+
+    const subfieldPanel = document.createElement('div');
+    subfieldPanel.className = 'multi-panel' + (slot.field ? '' : ' disabled');
+    const sfSearch = document.createElement('input');
+    sfSearch.className = 'multi-search';
+    sfSearch.placeholder = 'Search subfields…';
+    sfSearch.disabled = !slot.field;
+    const subfieldList = document.createElement('div');
+    subfieldList.className = 'multi-list';
+    const sfEmpty = document.createElement('div');
+    sfEmpty.className = 'multi-empty';
+    sfEmpty.textContent = 'Select a field first.';
+    sfEmpty.style.display = 'none';
+    subfieldList.appendChild(sfEmpty);
+    subfieldPanel.appendChild(sfSearch);
+    subfieldPanel.appendChild(subfieldList);
+
+    const subfieldCount = document.createElement('div');
+    subfieldCount.className = 'multi-count';
+    subfieldCount.textContent = '0 selected';
+
+    const subfieldBadges = document.createElement('div');
+    subfieldBadges.className = 'badges-wrap';
+
+    sfSearch.oninput = () => {
+      const q = sfSearch.value.toLowerCase();
+      subfieldList.querySelectorAll('.multi-option').forEach(o => {
+        o.classList.toggle('hidden', !o.dataset.value.toLowerCase().includes(q));
+      });
+    };
+
+    subfieldWrap.appendChild(subfieldLabel);
+    subfieldWrap.appendChild(subfieldPanel);
+    subfieldWrap.appendChild(subfieldCount);
+    subfieldWrap.appendChild(subfieldBadges);
+    box.appendChild(subfieldWrap);
+
+    // Per-slot keywords (Professional only)
+    if (PLAN === 'professional') {
+      const KW_SLOT_MAX = 15;
+      if (!slot.keywords) slot.keywords = [];
+
+      const kwField = document.createElement('div');
+      kwField.className = 'field';
+      kwField.style.marginTop = '16px';
+
+      const kwLabel = document.createElement('label');
+      kwLabel.style.cssText = 'font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;';
+      kwLabel.innerHTML = `Keywords for this domain <span style="color:var(--gold);font-size:10px;font-weight:400;letter-spacing:.04em;text-transform:none">— up to ${KW_SLOT_MAX}</span>`;
+
+      const kwTagWrap = document.createElement('div');
+      kwTagWrap.className = 'tag-wrap';
+
+      const kwInput = document.createElement('input');
+      kwInput.className = 'tag-input';
+      kwInput.placeholder = 'Type a keyword and press Enter or comma…';
+      kwInput.maxLength = 60;
+      kwTagWrap.onclick = () => kwInput.focus();
+
+      const kwCounter = document.createElement('div');
+      kwCounter.className = 'tag-counter';
+
+      function renderSlotKw() {
+        kwTagWrap.querySelectorAll('.kw-tag').forEach(t => t.remove());
+        slot.keywords.forEach((tag, i) => {
+          const el = document.createElement('span');
+          el.className = 'kw-tag';
+          el.innerHTML = `${tag} <button type="button" class="tag-remove" data-i="${i}">×</button>`;
+          kwTagWrap.insertBefore(el, kwInput);
+        });
+        kwCounter.textContent = `${slot.keywords.length} / ${KW_SLOT_MAX} keywords`;
+        kwCounter.className = 'tag-counter' + (slot.keywords.length >= KW_SLOT_MAX ? ' at-limit' : '');
+      }
+
+      function addSlotKw(val) {
+        val = val.trim().toLowerCase().replace(/,/g, '');
+        if (!val || slot.keywords.includes(val) || slot.keywords.length >= KW_SLOT_MAX) return;
+        slot.keywords.push(val);
+        renderSlotKw();
+      }
+
+      kwTagWrap.addEventListener('click', e => {
+        const btn = e.target.closest('.tag-remove');
+        if (!btn) return;
+        slot.keywords.splice(+btn.dataset.i, 1);
+        renderSlotKw();
+      });
+
+      kwInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addSlotKw(kwInput.value); kwInput.value = ''; }
+        else if (e.key === 'Backspace' && !kwInput.value && slot.keywords.length) { slot.keywords.pop(); renderSlotKw(); }
+      });
+
+      kwInput.addEventListener('blur', () => {
+        if (kwInput.value.trim()) { addSlotKw(kwInput.value); kwInput.value = ''; }
+      });
+
+      kwTagWrap.appendChild(kwInput);
+      renderSlotKw();
+
+      kwField.appendChild(kwLabel);
+      kwField.appendChild(kwTagWrap);
+      kwField.appendChild(kwCounter);
+      box.appendChild(kwField);
+    }
+
+    slot.slotEl = box;
+    slot._subfieldPanel = subfieldPanel;
+    slot._subfieldList  = subfieldList;
+    slot._subfieldCount = subfieldCount;
+    slot._subfieldBadges= subfieldBadges;
+    slot._sfSearch      = sfSearch;
+
+    if (slot.field) {
+      renderSlotSubfields(slot, subfieldWrap, subfieldPanel, subfieldList, subfieldCount, subfieldBadges, idx);
+    }
+
+    wrap.appendChild(box);
+  });
+
+  // Add field button (essential only — professional uses renderDomainSlots)
+  if (domain && state.fieldSlots.length < LIM.fields && LIM.fields > 1) {
+    const addBtn = document.createElement('button');
+    addBtn.type = 'button';
+    addBtn.style.cssText = 'width:100%;padding:12px;border:1px dashed var(--border);border-radius:6px;background:transparent;font-family:var(--sans);font-size:13px;color:var(--muted);cursor:pointer;transition:all .2s;margin-bottom:12px;';
+    addBtn.textContent = `+ Add another field (${state.fieldSlots.length} / ${LIM.fields})`;
+    addBtn.onmouseover = () => { addBtn.style.borderColor = 'var(--gold)'; addBtn.style.color = 'var(--gold)'; };
+    addBtn.onmouseout  = () => { addBtn.style.borderColor = 'var(--border)'; addBtn.style.color = 'var(--muted)'; };
+    addBtn.onclick = addFieldSlot;
+    wrap.appendChild(addBtn);
+  }
+}
+
+function renderSlotSubfields(slot, wrap, panel, list, countEl, badgesEl, slotIdx) {
+  // For professional, domain comes from slot; for essential, from global selector
+  const domain = PLAN === 'professional' ? slot.domain : document.getElementById('domain').value;
+  list.querySelectorAll('.multi-option').forEach(el => el.remove());
+
+  if (!domain || !slot.field) {
+    panel.classList.add('disabled');
+    slot._sfSearch.disabled = true;
+    return;
+  }
+
+  panel.classList.remove('disabled');
+  slot._sfSearch.disabled = false;
+
+  const empty = list.querySelector('.multi-empty');
+  const subfields = Object.keys(H[domain][slot.field]).sort();
+
+  subfields.forEach(sf => {
+    const div = document.createElement('div');
+    div.className = 'multi-option' + (slot.subfields.includes(sf) ? ' selected' : '');
+    div.dataset.value = sf;
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.value = sf;
+    cb.checked = slot.subfields.includes(sf);
+    const sp = document.createElement('span');
+    sp.textContent = sf;
+    div.appendChild(cb); div.appendChild(sp);
+
+    const toggle = (checked) => {
+      // Update visual checkbox state
+      if (checked) {
+        cb.style.background = 'var(--gold)';
+        cb.style.borderColor = 'var(--gold)';
+      } else {
+        cb.style.background = '#fff';
+        cb.style.borderColor = 'rgba(120,95,20,0.4)';
+      }
+      if (checked) {
+        // Professional: per-slot limit (3); Essential: global total limit
+        const atLimit = PLAN === 'professional'
+          ? slot.subfields.length >= LIM.subfields
+          : state.fieldSlots.reduce((acc, s) => acc + s.subfields.length, 0) >= LIM.subfields;
+        if (atLimit) {
+          cb.checked = false;
+          cb.style.background = '#fff';
+          cb.style.borderColor = 'rgba(120,95,20,0.4)';
+          div.classList.remove('selected');
+          countEl.textContent = `⚠ Max ${LIM.subfields} subfields per domain`;
+          setTimeout(() => updateSlotCount(slot, countEl), 2500);
+          return;
+        }
+        if (!slot.subfields.includes(sf)) slot.subfields.push(sf);
+        div.classList.add('selected');
+      } else {
+        const i = slot.subfields.indexOf(sf);
+        if (i > -1) slot.subfields.splice(i, 1);
+        div.classList.remove('selected');
+      }
+      updateSlotCount(slot, countEl);
+      renderSlotBadges(slot, badgesEl, list, slotIdx);
+      rebuildTopics();
+      rebuildJournals();
+    };
+
+    cb.addEventListener('change', () => toggle(cb.checked));
+    div.addEventListener('click', e => { if (e.target !== cb) { cb.checked = !cb.checked; toggle(cb.checked); }});
+    list.insertBefore(div, empty);
+  });
+
+  updateSlotCount(slot, countEl);
+  renderSlotBadges(slot, badgesEl, list, slotIdx);
+}
+
+function updateSlotCount(slot, countEl) {
+  if (PLAN === 'professional') {
+    // Each domain slot has its own 3-subfield limit
+    countEl.textContent = `${slot.subfields.length} / ${LIM.subfields} selected`;
+    countEl.className = 'multi-count' + (slot.subfields.length >= LIM.subfields ? ' at-limit' : '');
+  } else {
+    const total = state.fieldSlots.reduce((acc, s) => acc + s.subfields.length, 0);
+    countEl.textContent = `${slot.subfields.length} selected (${total} / ${LIM.subfields} total)`;
+    countEl.className = 'multi-count' + (total >= LIM.subfields ? ' at-limit' : '');
+  }
+}
+
+function renderSlotBadges(slot, badgesEl, list, slotIdx) {
+  badgesEl.innerHTML = '';
+  slot.subfields.forEach(sf => {
+    const b = document.createElement('span');
+    b.className = 'badge subfield';
+    b.innerHTML = `${sf} <button type="button" class="badge-remove" data-slot="${slotIdx}" data-sf="${encodeURIComponent(sf)}">×</button>`;
+    badgesEl.appendChild(b);
+  });
+  badgesEl.addEventListener('click', e => {
+    const btn = e.target.closest('.badge-remove');
+    if (!btn) return;
+    const si  = parseInt(btn.dataset.slot);
+    const sf  = decodeURIComponent(btn.dataset.sf);
+    const slots = PLAN === 'professional' ? state.domainSlots : state.fieldSlots;
+    const s   = slots[si];
+    if (!s) return;
+    const i = s.subfields.indexOf(sf);
+    if (i > -1) s.subfields.splice(i, 1);
+    // sync checkbox
+    if (s._subfieldList) {
+      s._subfieldList.querySelectorAll('.multi-option').forEach(o => {
+        if (o.dataset.value === sf) {
+          const inp = o.querySelector('input');
+          inp.checked = false;
+          inp.style.background = '#fff';
+          inp.style.borderColor = 'rgba(120,95,20,0.4)';
+          o.classList.remove('selected');
+        }
+      });
+    }
+    updateSlotCount(s, s._subfieldCount);
+    renderSlotBadges(s, s._subfieldBadges, s._subfieldList, si);
+    rebuildTopics();
+    rebuildJournals();
+  });
+}
+
+// Compatibility shims for journal/topic rebuilds
+function getAllSubfields() {
+  if (PLAN === 'professional') {
+    const result = [];
+    state.domainSlots.forEach(slot => {
+      if (slot.domain && slot.field) {
+        slot.subfields.forEach(sf => result.push({ domain: slot.domain, field: slot.field, sf }));
+      }
+    });
+    return result;
+  }
+  const domain = document.getElementById('domain').value;
+  const result = [];
+  state.fieldSlots.forEach(slot => {
+    if (slot.field) slot.subfields.forEach(sf => result.push({ domain, field: slot.field, sf }));
+  });
+  return result;
+}
+
+function onFieldChange() {} // no-op — handled per slot now
+
+// ═══════════════════════════════════════════════════════
+// MULTI-SELECT
+// ═══════════════════════════════════════════════════════
+function buildMulti(which, items) {
+  const panel  = document.getElementById(which + '-panel');
+  const list   = document.getElementById(which + '-list');
+  const search = document.getElementById(which + '-search');
+  const empty  = document.getElementById(which + '-empty');
+
+  list.querySelectorAll('.multi-option').forEach(el => el.remove());
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className   = 'multi-option';
+    div.dataset.value = item;
+    const cb  = document.createElement('input');
+    cb.type   = 'checkbox'; cb.value = item;
+    const sp  = document.createElement('span');
+    sp.textContent = item;
+    div.appendChild(cb); div.appendChild(sp);
+    cb.addEventListener('change', () => toggleSel(which, item, cb.checked));
+    div.addEventListener('click', e => { if (e.target !== cb) { cb.checked = !cb.checked; toggleSel(which, item, cb.checked); }});
+    list.insertBefore(div, empty);
+  });
+
+  panel.classList.remove('disabled');
+  search.disabled = false;
+  updateCount(which);
+}
+
+function toggleSel(which, value, checked) {
+  const arr     = which === 'subfield' ? state.subfields : state.topics;
+  const limit   = which === 'subfield' ? LIM.subfields : null;
+
+  if (checked) {
+    if (limit && arr.length >= limit) {
+      // Uncheck visually and bail
+      document.querySelectorAll(`#${which}-list .multi-option`).forEach(o => {
+        if (o.dataset.value === value) o.querySelector('input').checked = false;
+      });
+      showLimitWarning(which, limit);
+      return;
+    }
+    if (!arr.includes(value)) arr.push(value);
+  } else {
+    const i = arr.indexOf(value);
+    if (i > -1) arr.splice(i, 1);
+  }
+
+  syncCheckboxes(which);
+  renderBadges(which);
+  updateCount(which);
+  if (which === 'subfield') { rebuildTopics(); rebuildJournals(); }
+}
+
+function showLimitWarning(which, limit) {
+  const el = document.getElementById(which + '-count');
+  const orig = el.textContent;
+  el.textContent = `⚠ Your plan allows only ${limit} subfield${limit > 1 ? 's' : ''}`;
+  el.style.color = 'var(--accent)';
+  setTimeout(() => { el.style.color = ''; updateCount(which); }, 2500);
+}
+
+function syncCheckboxes(which) {
+  const arr = which === 'subfield' ? state.subfields : state.topics;
+  document.querySelectorAll(`#${which}-list .multi-option`).forEach(opt => {
+    const sel = arr.includes(opt.dataset.value);
+    opt.querySelector('input').checked = sel;
+    opt.classList.toggle('selected', sel);
+  });
+}
+
+function renderBadges(which) {
+  const arr  = which === 'subfield' ? state.subfields : state.topics;
+  const wrap = document.getElementById(which + '-badges');
+  wrap.innerHTML = '';
+  arr.forEach(val => {
+    const b = document.createElement('span');
+    b.className = `badge ${which}`;
+    b.innerHTML = `${val} <button type="button" class="badge-remove" data-which="${which}" data-val="${encodeURIComponent(val)}">×</button>`;
+    wrap.appendChild(b);
+  });
+  wrap.addEventListener('click', badgeRemove);
+}
+
+function badgeRemove(e) {
+  const btn = e.target.closest('.badge-remove');
+  if (!btn) return;
+  const which = btn.dataset.which;
+  const val   = decodeURIComponent(btn.dataset.val);
+  const arr   = which === 'subfield' ? state.subfields : state.topics;
+  const i     = arr.indexOf(val);
+  if (i > -1) arr.splice(i, 1);
+  syncCheckboxes(which);
+  renderBadges(which);
+  updateCount(which);
+  if (which === 'subfield') { rebuildTopics(); rebuildJournals(); }
+}
+
+function updateCount(which) {
+  const arr = which === 'subfield' ? state.subfields : state.topics;
+  const el  = document.getElementById(which + '-count');
+  const lim = which === 'subfield' ? LIM.subfields : null;
+  el.textContent = `${arr.length}${lim ? ' / ' + lim : ''} selected`;
+  el.className   = 'multi-count' + (lim && arr.length >= lim ? ' at-limit' : '');
+}
+
+function filterMulti(which) {
+  const q    = document.getElementById(which + '-search').value.toLowerCase();
+  const opts = document.querySelectorAll(`#${which}-list .multi-option`);
+  const empty = document.getElementById(which + '-empty');
+  let vis = 0;
+  opts.forEach(o => { const m = o.dataset.value.toLowerCase().includes(q); o.classList.toggle('hidden', !m); if(m) vis++; });
+  empty.style.display = vis === 0 ? 'block' : 'none';
+}
+
+function resetMulti(which) {
+  if (which === 'subfield') state.subfields.length = 0;
+  else state.topics.length = 0;
+  const panel  = document.getElementById(which + '-panel');
+  const list   = document.getElementById(which + '-list');
+  const search = document.getElementById(which + '-search');
+  const empty  = document.getElementById(which + '-empty');
+  list.querySelectorAll('.multi-option').forEach(el => el.remove());
+  empty.style.display = 'none';
+  panel.classList.add('disabled');
+  search.disabled = true;
+  search.value    = '';
+  renderBadges(which);
+  updateCount(which);
+}
+
+function rebuildTopics() {
+  state.topics.length = 0;
+  const allTopics = new Set();
+  getAllSubfields().forEach(({domain, field, sf}) => {
+    if (H[domain]?.[field]?.[sf]) Object.keys(H[domain][field][sf]).forEach(t => allTopics.add(t));
+  });
+  resetMulti('topic');
+  if (allTopics.size > 0) buildMulti('topic', [...allTopics].sort());
+}
+
+// ═══════════════════════════════════════════════════════
+// JOURNALS
+// ═══════════════════════════════════════════════════════
+let allJournals = [];
+
+function rebuildJournals() {
+  const slotEntries = getAllSubfields();
+  if (slotEntries.length === 0) { clearJournals(); return; }
+
+  const journalSet = new Set();
+  slotEntries.forEach(({domain, field, sf}) => {
+    const topics = H[domain]?.[field]?.[sf];
+    if (!topics) return;
+    const relevantTopics = state.topics.length > 0
+      ? state.topics.filter(t => topics[t])
+      : Object.keys(topics);
+    relevantTopics.forEach(t => {
+      (topics[t] || []).forEach(j => journalSet.add(j));
+    });
+  });
+
+  allJournals = [...journalSet].sort();
+  renderJournalList();
+  document.getElementById('journal-placeholder').style.display = 'none';
+  document.getElementById('journal-section').style.display    = 'block';
+  document.getElementById('journal-total-count').textContent  = `${allJournals.length} journals found`;
+  // Clean stale whitelist/blacklist entries
+  state.journalWL = state.journalWL.filter(j => journalSet.has(j));
+  state.journalBL = state.journalBL.filter(j => journalSet.has(j));
+  renderJournalBadges();
+}
+
+function clearJournals() {
+  allJournals = [];
+  document.getElementById('journal-placeholder').style.display = 'block';
+  document.getElementById('journal-section').style.display    = 'none';
+  state.journalWL.length = 0;
+  state.journalBL.length = 0;
+  renderJournalBadges();
+}
+
+function renderJournalList() {
+  const list = document.getElementById('journal-list');
+  list.innerHTML = allJournals.length === 0
+    ? '<div class="journal-empty">No journals found for this selection.</div>'
+    : '';
+
+  allJournals.forEach(j => {
+    const div  = document.createElement('div');
+    div.className      = 'journal-item';
+    div.dataset.journal = j;
+
+    const nameEl = document.createElement('span');
+    nameEl.className   = 'journal-item-name';
+    nameEl.textContent = j;
+
+    const acts  = document.createElement('div');
+    acts.className = 'journal-item-actions';
+
+    const wlBtn = document.createElement('button');
+    wlBtn.type      = 'button';
+    wlBtn.className = 'btn-jrn btn-jrn-wl';
+    wlBtn.textContent = '+ WL';
+    wlBtn.title     = 'Add to whitelist';
+    wlBtn.onclick   = () => toggleJournal('wl', j);
+
+    const blBtn = document.createElement('button');
+    blBtn.type      = 'button';
+    blBtn.className = 'btn-jrn btn-jrn-bl';
+    blBtn.textContent = '+ BL';
+    blBtn.title     = 'Add to blacklist';
+    blBtn.onclick   = () => toggleJournal('bl', j);
+
+    acts.appendChild(wlBtn);
+    acts.appendChild(blBtn);
+    div.appendChild(nameEl);
+    div.appendChild(acts);
+    list.appendChild(div);
+  });
+
+  syncJournalButtons();
+}
+
+function toggleJournal(type, journal) {
+  const wl = state.journalWL;
+  const bl = state.journalBL;
+
+  if (type === 'wl') {
+    const i = wl.indexOf(journal);
+    if (i > -1) { wl.splice(i, 1); }
+    else {
+      // Remove from blacklist if present
+      const bi = bl.indexOf(journal);
+      if (bi > -1) bl.splice(bi, 1);
+      wl.push(journal);
+    }
+  } else {
+    const i = bl.indexOf(journal);
+    if (i > -1) { bl.splice(i, 1); }
+    else {
+      const wi = wl.indexOf(journal);
+      if (wi > -1) wl.splice(wi, 1);
+      bl.push(journal);
+    }
+  }
+  syncJournalButtons();
+  renderJournalBadges();
+}
+
+function syncJournalButtons() {
+  document.querySelectorAll('.journal-item').forEach(row => {
+    const j    = row.dataset.journal;
+    const wlBtn = row.querySelector('.btn-jrn-wl');
+    const blBtn = row.querySelector('.btn-jrn-bl');
+    const inWL  = state.journalWL.includes(j);
+    const inBL  = state.journalBL.includes(j);
+    if (wlBtn) { wlBtn.classList.toggle('active-wl', inWL); wlBtn.textContent = inWL ? '✓ WL' : '+ WL'; }
+    if (blBtn) { blBtn.classList.toggle('active-bl', inBL); blBtn.textContent = inBL ? '✓ BL' : '+ BL'; }
+  });
+}
+
+function renderJournalBadges() {
+  renderOneBadgeGroup('whitelist', state.journalWL, 'journal-wl', 'whitelist-badges', 'whitelist-empty', 'None selected — all journals included.');
+  renderOneBadgeGroup('blacklist', state.journalBL, 'journal-bl', 'blacklist-badges', 'blacklist-empty', 'None excluded.');
+}
+
+function renderOneBadgeGroup(type, arr, cls, wrapId, emptyId, emptyMsg) {
+  const wrap  = document.getElementById(wrapId);
+  const empty = document.getElementById(emptyId);
+  // Remove existing badges only
+  wrap.querySelectorAll('.badge').forEach(b => b.remove());
+  arr.forEach(j => {
+    const b = document.createElement('span');
+    b.className = `badge ${cls}`;
+    b.innerHTML = `${j} <button type="button" class="badge-remove" data-type="${type}" data-journal="${encodeURIComponent(j)}">×</button>`;
+    wrap.insertBefore(b, empty);
+  });
+  empty.style.display = arr.length === 0 ? 'inline' : 'none';
+}
+
+// Badge removal for journals
+document.getElementById('whitelist-badges').addEventListener('click', e => {
+  const btn = e.target.closest('.badge-remove');
+  if (!btn) return;
+  const j = decodeURIComponent(btn.dataset.journal);
+  const i = state.journalWL.indexOf(j);
+  if (i > -1) state.journalWL.splice(i, 1);
+  syncJournalButtons(); renderJournalBadges();
+});
+document.getElementById('blacklist-badges').addEventListener('click', e => {
+  const btn = e.target.closest('.badge-remove');
+  if (!btn) return;
+  const j = decodeURIComponent(btn.dataset.journal);
+  const i = state.journalBL.indexOf(j);
+  if (i > -1) state.journalBL.splice(i, 1);
+  syncJournalButtons(); renderJournalBadges();
+});
+
+function filterJournals() {
+  const q = document.getElementById('journal-search').value.toLowerCase();
+  document.querySelectorAll('.journal-item').forEach(row => {
+    row.classList.toggle('hidden', !row.dataset.journal.toLowerCase().includes(q));
+  });
+}
+
+// Also rebuild journals when topics change
+const origToggleSel = toggleSel;
+
+// ═══════════════════════════════════════════════════════
+// TAG INPUTS (keywords / blacklist)
+// ═══════════════════════════════════════════════════════
+function makeTagSystem(inputId, wrapperId, counterId, maxTags, isBlacklist, unitLabel = 'keywords') {
+  const input   = document.getElementById(inputId);
+  const wrap    = document.getElementById(wrapperId);
+  const counter = document.getElementById(counterId);
+  const tags    = [];
+
+  function render() {
+    wrap.querySelectorAll('.kw-tag').forEach(t => t.remove());
+    tags.forEach((tag, i) => {
+      const el = document.createElement('span');
+      el.className = 'kw-tag' + (isBlacklist ? ' blacklist' : '');
+      el.innerHTML = `${tag} <button type="button" class="tag-remove" data-i="${i}">×</button>`;
+      wrap.insertBefore(el, input);
+    });
+    if (maxTags) {
+      counter.textContent = `${tags.length} / ${maxTags} ${unitLabel}`;
+      counter.className   = 'tag-counter' + (tags.length >= maxTags ? ' at-limit' : '');
+    } else {
+      counter.textContent = `${tags.length} excluded`;
+    }
+  }
+  function addTag(val) {
+    val = val.trim().toLowerCase().replace(/,/g, '');
+    if (!val || tags.includes(val)) return;
+    if (maxTags && tags.length >= maxTags) return;
+    tags.push(val); render();
+  }
+  wrap.addEventListener('click', e => {
+    if (e.target.classList.contains('tag-remove')) { tags.splice(+e.target.dataset.i, 1); render(); }
+  });
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(input.value); input.value = ''; }
+    else if (e.key === 'Backspace' && !input.value && tags.length) { tags.pop(); render(); }
+  });
+  input.addEventListener('blur', () => { if (input.value.trim()) { addTag(input.value); input.value = ''; } });
+  return { getTags: () => [...tags] };
+}
+
+const kwSystem = makeTagSystem('kw-input', 'kw-wrap', 'kw-counter', LIM.keywords, false, 'keywords');
+const blSystem = makeTagSystem('bl-input', 'bl-wrap', 'bl-counter', null, true);
+const topicPrefSystem = makeTagSystem('topic-pref-input', 'topic-pref-wrap', 'topic-pref-counter', 30, false, 'topics');
+
+// ═══════════════════════════════════════════════════════
+// MODE TOGGLE
+// ═══════════════════════════════════════════════════════
+let currentMode = 'new';
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('btn-new').classList.toggle('active', mode === 'new');
+  document.getElementById('btn-update').classList.toggle('active', mode === 'update');
+  document.getElementById('update-notice').style.display = mode === 'update' ? 'block' : 'none';
+  const btn = document.getElementById('submit-btn');
+  btn.textContent = mode === 'new' ? 'Register & Subscribe' : 'Save Updated Preferences';
+  btn.classList.toggle('update-mode', mode === 'update');
+}
+
+// ═══════════════════════════════════════════════════════
+// SUBMIT
+// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// INPUT SANITIZATION
+// ═══════════════════════════════════════════════════════
+function sanitize(str) {
+  if (!str) return '';
+  return String(str)
+    .trim()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .slice(0, 500); // max length per field
+}
+
+function sanitizeEmail(email) {
+  const e = String(email).trim().toLowerCase().slice(0, 254);
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  return emailRegex.test(e) ? e : '';
+}
+
+function sanitizeTags(arr, maxItems, maxLen) {
+  return arr
+    .slice(0, maxItems)
+    .map(t => String(t).trim().replace(/[<>"']/g, '').slice(0, maxLen))
+    .filter(t => t.length > 0);
+}
+
+//document.getElementById('reg-form').addEventListener('submit', function(e) {
+document.getElementById('reg-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  // Flush any keyword/blacklist still typed (not yet confirmed with Enter) in all domain slots
+  if (PLAN === 'professional') {
+    state.domainSlots.forEach(s => {
+      if (s._kwInput && s._kwInput.value.trim()) {
+        const val = s._kwInput.value.trim().toLowerCase().replace(/,/g, '');
+        if (val && !s.keywords.includes(val) && s.keywords.length < LIM.keywords) {
+          s.keywords.push(val);
+        }
+        s._kwInput.value = '';
+      }
+      if (s._blInput && s._blInput.value.trim()) {
+        const val = s._blInput.value.trim().toLowerCase().replace(/,/g, '');
+        if (val && !s.kw_blacklist.includes(val)) {
+          s.kw_blacklist.push(val);
+        }
+        s._blInput.value = '';
+      }
+    });
+  }
+
+  const kws = kwSystem.getTags();
+  if (PLAN === 'essential' && kws.length === 0) {
+    alert('Please add at least one keyword of interest.'); return;
+  }
+  const hasSubfields = PLAN === 'professional'
+    ? state.domainSlots.some(s => s.subfields.length > 0)
+    : state.fieldSlots.some(s => s.subfields.length > 0);
+  if (!hasSubfields) {
+    alert('Please select at least one subfield.'); return;
+  }
+
+  const rawEmail = document.getElementById('email').value.trim();
+  const cleanEmail = sanitizeEmail(rawEmail);
+  if (!cleanEmail) { alert('Please enter a valid e-mail address.'); return; }
+
+  const record = {
+    plan:         PLAN,
+    mode:         currentMode,
+    name:         sanitize(document.getElementById('name').value),
+    email:        cleanEmail,
+    country:      sanitize(document.getElementById('country').value),
+    dob:          sanitize(document.getElementById('dob').value),
+    education:    sanitize(document.getElementById('education').value),
+    occupation:   sanitize(document.getElementById('occupation').value),
+    institution:  sanitize(document.getElementById('institution').value),
+    domain:       PLAN === 'professional'
+      ? (state.domainSlots[0]?.domain || '')
+      : sanitize(document.getElementById('domain').value),
+    fields: PLAN === 'professional'
+      ? state.domainSlots.map(s => ({
+          domain:       sanitize(s.domain),
+          field:        sanitize(s.field),
+          subfields:    sanitizeTags(s.subfields, 3, 200),
+          keywords:     sanitizeTags(s.keywords || [], 15, 60),
+          kw_blacklist: sanitizeTags(s.kw_blacklist || [], 500, 60)
+        }))
+      : state.fieldSlots.map(s => ({
+          field:     sanitize(s.field),
+          subfields: sanitizeTags(s.subfields, LIM.subfields, 200)
+        })),
+    topics:       sanitizeTags(
+      Array.from(new Set([...state.topics, ...topicPrefSystem.getTags()])),
+      80,
+      200
+    ),
+    granularity:  'subfield',
+    journal_whitelist: sanitizeTags(state.journalWL, 100, 300),
+    journal_blacklist: sanitizeTags(state.journalBL, 100, 300),
+    keywords:     PLAN === 'essential'
+      ? sanitizeTags(kws, LIM.keywords, 60)
+      : sanitizeTags(
+          Array.from(new Set(state.domainSlots.flatMap(s => s.keywords || []))),
+          LIM.keywords * LIM.domains, 60
+        ),
+    kw_blacklist: PLAN === 'essential'
+      ? sanitizeTags(blSystem.getTags(), LIM.kw_blacklist ?? 500, 60)
+      : sanitizeTags(
+          Array.from(new Set(state.domainSlots.flatMap(s => s.kw_blacklist || []))),
+          500, 60
+        ),
+    format:       'email',
+    frequency:    'weekly_friday',
+    submitted_at: new Date().toISOString()
+  };
+
+  const required = ['name','email','country','education'];
+  if (PLAN === 'essential') required.push('domain');
+  for (const k of required) {
+    if (!record[k]) { alert(`Please fill in: ${k.replace(/_/g,' ')}`); return; }
+  }
+  // For professional, validate that at least one domain slot is filled
+  if (PLAN === 'professional') {
+    const hasValidSlot = state.domainSlots.some(s => s.domain && s.field);
+    if (!hasValidSlot) { alert('Please select at least one domain and field.'); return; }
+  }
+
+  // Rate limit: prevent double submission
+  const lastSubmit = sessionStorage.getItem('np_last_submit');
+  const now = Date.now();
+  if (lastSubmit && now - parseInt(lastSubmit) < 10000) {
+    alert('Please wait a few seconds before resubmitting.');
+    return;
+  }
+  sessionStorage.setItem('np_last_submit', now.toString());
+
+  console.log('SUBSCRIBER RECORD:', JSON.stringify(record, null, 2));
+
+  // ── POST to Google Apps Script ──────────────────────────────
+  const FORM_API_URL   = window.NEXUS_RUNTIME && window.NEXUS_RUNTIME.FORM_API_URL;
+  const SECRET_TOKEN   = window.NEXUS_RUNTIME && window.NEXUS_RUNTIME.SECRET_TOKEN;
+
+  // Attach the secret token so Apps Script accepts the request
+  record.token = SECRET_TOKEN || '';
+
+  // Show loading state
+  const submitBtn = document.getElementById('submit-btn');
+  const originalText = submitBtn.textContent;
+  submitBtn.textContent = 'A enviar…';
+  submitBtn.disabled = true;
+
+  try {
+    if (!FORM_API_URL) {
+      throw new Error('FORM_API_URL not set in runtime-config.js.');
+    }
+
+    // Use text/plain to avoid a CORS preflight — Apps Script reads the body as JSON either way.
+    const response = await fetch(FORM_API_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body:    JSON.stringify(record),
+    });
+
+    let result = {};
+    try { result = await response.json(); } catch (_) {}
+
+    if (result.ok === false) {
+      throw new Error(result.error || 'Submission failed. Please try again.');
+    }
+  } catch (err) {
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
+    alert('Error: ' + err.message);
+    return;
+  }
+
+  document.getElementById('reg-form').style.display = 'none';
+  const msg = document.getElementById('success-msg');
+  msg.style.display = 'block';
+  document.getElementById('success-title').textContent =
+    currentMode === 'new' ? "You're subscribed." : 'Preferences updated.';
+  document.getElementById('success-body').textContent =
+    currentMode === 'new'
+      ? `Welcome, ${record.name.split(' ')[0]}. Your first digest arrives next Monday.`
+      : `Your preferences for ${record.email} have been updated.`;
+});
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+loadHierarchy();
+</script>
+</body>
+</html>
