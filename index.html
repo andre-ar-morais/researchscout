@@ -10,15 +10,17 @@
    TOKENS
 ═══════════════════════════════════════ */
 :root {
-  --black:   #f5f0e8;
-  --white:   #1c1a17;
-  --cream:   #eae4d8;
-  --gold:    #8a6500;
-  --gold-lt: #5c4200;
-  --rust:    #a03020;
+  --black:   #ffffff;
+  --white:   #0f172a;
+  --cream:   #eef1f8;
+  --gold:    #1a3270;
+  --gold-lt: #0f2050;
+  --rust:    #dc2626;
   --ink:     #ffffff;
-  --muted:   #7a7265;
-  --border:  rgba(120,95,20,0.2);
+  --muted:   #64748b;
+  --border:  rgba(26,50,112,0.14);
+  --accent:  #dc2626;
+  --accent-soft: rgba(220,38,38,0.07);
   --serif:   'Spectral', Georgia, serif;
   --sans:    'Nunito Sans', sans-serif;
 }
@@ -60,9 +62,9 @@ nav {
   align-items: center;
   justify-content: space-between;
   padding: 20px 48px;
-  background: rgba(232,224,210,.98);
+  background: rgba(255,255,255,.98);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(120,95,20,0.3);
+  border-bottom: 1px solid rgba(26,50,112,0.12);
   transition: padding .3s;
 }
 .nav-logo {
@@ -118,23 +120,14 @@ nav {
   transform: translate(-50%, -60%);
   width: 900px; height: 700px;
   background: radial-gradient(ellipse at center,
-    rgba(201,168,76,.12) 0%,
-    rgba(184,78,42,.06) 40%,
+    rgba(26,50,112,.10) 0%,
+    rgba(26,50,112,.05) 40%,
     transparent 70%);
   pointer-events: none;
 }
 
 /* Animated grid lines */
-.hero-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(138,101,0,.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(138,101,0,.06) 1px, transparent 1px);
-  background-size: 80px 80px;
-  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
-  animation: gridDrift 20s linear infinite;
-}
+.hero-grid { display: none; }
 @keyframes gridDrift {
   from { transform: translate(0,0); }
   to   { transform: translate(80px,80px); }
@@ -218,12 +211,12 @@ nav {
   text-decoration: none;
   border-radius: 3px;
   transition: background .2s, transform .15s, box-shadow .2s;
-  box-shadow: 0 0 0 0 rgba(201,168,76,0);
+  box-shadow: 0 0 0 0 rgba(26,50,112,0);
 }
 .btn-primary:hover {
   background: var(--gold-lt);
   transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(201,168,76,.25);
+  box-shadow: 0 8px 32px rgba(26,50,112,.2);
 }
 .btn-ghost {
   border: 1px solid var(--border);
@@ -320,12 +313,12 @@ section { padding: 120px 24px; }
   position: relative;
   transition: background .3s;
 }
-.step:hover { background: rgba(138,101,0,.04); }
+.step:hover { background: rgba(26,50,112,.04); }
 .step-num {
   font-family: var(--serif);
   font-size: 72px;
   font-weight: 300;
-  color: rgba(138,101,0,.45);
+  color: rgba(26,50,112,.55);
   line-height: 1;
   margin-bottom: 24px;
 }
@@ -410,7 +403,7 @@ section { padding: 120px 24px; }
 .card-subject strong { color: rgba(28,26,23,.7); }
 .article-item {
   padding: 10px 0;
-  border-bottom: 1px solid rgba(201,168,76,.1);
+  border-bottom: 1px solid rgba(26,50,112,.08);
 }
 .article-item:last-child { border-bottom: none; }
 .article-title {
@@ -427,7 +420,7 @@ section { padding: 120px 24px; }
   gap: 10px;
 }
 .article-tag {
-  background: rgba(138,101,0,.1);
+  background: rgba(26,50,112,.08);
   color: var(--gold-lt);
   padding: 2px 7px;
   border-radius: 3px;
@@ -440,7 +433,7 @@ section { padding: 120px 24px; }
 .feature-item { display: flex; gap: 20px; align-items: flex-start; }
 .feature-icon-wrap {
   width: 44px; height: 44px;
-  background: rgba(138,101,0,.09);
+  background: rgba(26,50,112,.07);
   border: 1px solid var(--border);
   border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
@@ -509,11 +502,11 @@ section { padding: 120px 24px; }
 .field-pill:hover {
   border-color: var(--gold);
   color: var(--gold);
-  background: rgba(138,101,0,.07);
+  background: rgba(26,50,112,.06);
 }
 .field-pill.highlight {
-  background: rgba(138,101,0,.1);
-  border-color: rgba(201,168,76,.4);
+  background: rgba(26,50,112,.08);
+  border-color: rgba(26,50,112,.25);
   color: var(--gold-lt);
 }
 
@@ -545,8 +538,8 @@ section { padding: 120px 24px; }
 }
 .pricing-card:hover { transform: translateY(-4px); }
 .pricing-card.featured {
-  background: rgba(138,101,0,.07);
-  border-color: rgba(138,101,0,.4);
+  background: rgba(26,50,112,.06);
+  border-color: rgba(26,50,112,.25);
 }
 .pricing-badge {
   position: absolute;
@@ -635,7 +628,7 @@ section { padding: 120px 24px; }
 }
 .btn-pricing-gold:hover {
   background: var(--gold-lt);
-  box-shadow: 0 8px 28px rgba(201,168,76,.3);
+  box-shadow: 0 8px 28px rgba(26,50,112,.2);
 }
 
 .pricing-note {
@@ -742,7 +735,7 @@ section { padding: 120px 24px; }
   padding-bottom: 22px;
 }
 .faq-cta-box {
-  background: rgba(138,101,0,.07);
+  background: rgba(26,50,112,.06);
   border: 1px solid var(--border);
   padding: 52px 44px;
   text-align: center;
@@ -1030,19 +1023,19 @@ footer {
         <div class="step-num">01</div>
         <div class="step-icon">🗂️</div>
         <h3>Tell us your field</h3>
-        <p><span style="color: #1c1a17; font-weight: 600">Fill in your subscriber profile:</span> select your domain, field, and subfield from our full scientific taxonomy, then add <span style="color: #1c1a17; font-weight: 600">up to 20 keywords</span> that define your exact research interest. Takes less than 3 minutes.</p>
+        <p><span style="color: #0f172a; font-weight: 600">Fill in your subscriber profile:</span> select your domain, field, and subfield from our full scientific taxonomy, then add <span style="color: #0f172a; font-weight: 600">up to 20 keywords</span> that define your exact research interest. Takes less than 3 minutes.</p>
       </div>
       <div class="step reveal reveal-delay-2">
         <div class="step-num">02</div>
         <div class="step-icon">⚙️</div>
         <h3>We filter the literature</h3>
-        <p>Every week our pipeline scans millions of new articles from CrossRef and OpenAlex and <span style="color: #1c1a17; font-weight: 600">filters their title against your keywords and chosen field</span>. Only what matches reaches you.</p>
+        <p>Every week our pipeline scans millions of new articles from CrossRef and OpenAlex and <span style="color: #0f172a; font-weight: 600">filters their title against your keywords and chosen field</span>. Only what matches reaches you.</p>
       </div>
       <div class="step reveal reveal-delay-3">
         <div class="step-num">03</div>
         <div class="step-icon">📬</div>
         <h3>Receive your selection</h3>
-        <p>A clean, structured selection arrives in your inbox on Monday morning. Click any title to go straight to the article via DOI. You'll recieve the following data: <span style="color: #1c1a17; font-weight: 600">authors, title, journal, publisher, url, DOI, publication date, field classification.</span></p>
+        <p>A clean, structured selection arrives in your inbox on Monday morning. Click any title to go straight to the article via DOI. You'll recieve the following data: <span style="color: #0f172a; font-weight: 600">authors, title, journal, publisher, url, DOI, publication date, field classification.</span></p>
       </div>
     </div>
 
@@ -1084,24 +1077,24 @@ footer {
             <div class="article-title">KRAS G12C inhibition in advanced NSCLC: updated phase III outcomes</div>
             <div class="article-meta">
               <span class="article-tag">Lung Cancer</span>
-              <span style="color:#6b6560">Nature Medicine · 2025</span>
+              <span style="color:#475569">Nature Medicine · 2025</span>
             </div>
           </div>
           <div class="article-item">
             <div class="article-title">Predictive biomarkers for checkpoint inhibitor response in SCLC</div>
             <div class="article-meta">
               <span class="article-tag">Immunotherapy</span>
-              <span style="color:#6b6560">Journal of Thoracic Oncology</span>
+              <span style="color:#475569">Journal of Thoracic Oncology</span>
             </div>
           </div>
           <div class="article-item">
             <div class="article-title">Real-world outcomes of osimertinib in EGFR-mutant lung adenocarcinoma</div>
             <div class="article-meta">
               <span class="article-tag">EGFR</span>
-              <span style="color:#6b6560">Annals of Oncology</span>
+              <span style="color:#475569">Annals of Oncology</span>
             </div>
           </div>
-          <div style="margin-top:16px;font-size:12px;color:#6b6560;text-align:right">+14 more articles this week</div>
+          <div style="margin-top:16px;font-size:12px;color:#475569;text-align:right">+14 more articles this week</div>
         </div>
       </div>
 
@@ -1193,8 +1186,8 @@ footer {
 
       <!-- STEP 1 -->
       <div style="display:flex;border:1px solid var(--border);background:#ffffff;">
-        <div style="background:rgba(138,101,0,.08);border-right:1px solid var(--border);padding:36px 30px;display:flex;align-items:flex-start;justify-content:center;min-width:86px;flex-shrink:0;">
-          <span style="font-family:var(--serif);font-size:52px;font-weight:300;color:rgba(138,101,0,.55);line-height:1;">1</span>
+        <div style="background:rgba(26,50,112,.06);border-right:1px solid var(--border);padding:36px 30px;display:flex;align-items:flex-start;justify-content:center;min-width:86px;flex-shrink:0;">
+          <span style="font-family:var(--serif);font-size:52px;font-weight:300;color:rgba(26,50,112,.65);line-height:1;">1</span>
         </div>
         <div style="padding:36px 40px;">
           <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:6px;flex-wrap:wrap;">
@@ -1204,9 +1197,9 @@ footer {
           <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:16px;">
             <li style="font-size:14px;color:rgba(28,26,23,.7);line-height:1.7;padding-left:16px;position:relative;">
               <span style="color:var(--gold);font-weight:700;margin-right:8px;font-size:16px;">›</span>
-             <!-- Go to the <a href="checkout.html" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,168,76,.3);">pricing page</a> and compare the <span style="color:var(--gold);font-weight:600;">Essential ($9.97/mo)</span> and <span style="color:var(--gold);font-weight:600;">Professional ($14.97/mo)</span> plans
+             <!-- Go to the <a href="checkout.html" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(26,50,112,.2);">pricing page</a> and compare the <span style="color:var(--gold);font-weight:600;">Essential ($5.97/mo)</span> and <span style="color:var(--gold);font-weight:600;">Professional ($9.97/mo)</span> plans
             </li> -->
-			  Go to the <a href="#pricing" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,168,76,.3);">pricing section</a> and compare the <span style="color:var(--gold);font-weight:600;">Essential ($9.97/mo)</span> and <span style="color:var(--gold);font-weight:600;">Professional ($14.97/mo)</span> plans
+			  Go to the <a href="#pricing" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(26,50,112,.2);">pricing section</a> and compare the <span style="color:var(--gold);font-weight:600;">Essential ($5.97/mo)</span> and <span style="color:var(--gold);font-weight:600;">Professional ($9.97/mo)</span> plans
             <li style="font-size:14px;color:rgba(28,26,23,.7);line-height:1.7;padding-left:16px;position:relative;">
               <span style="color:var(--gold);font-weight:700;margin-right:8px;font-size:16px;">›</span>
               Not sure which to pick? Start with <span style="color:var(--gold);font-weight:600;">Essential</span> — you can upgrade at any time with no interruption to your digest
@@ -1221,8 +1214,8 @@ footer {
 
       <!-- STEP 2 -->
       <div style="display:flex;border:1px solid var(--border);background:#ffffff;">
-        <div style="background:rgba(138,101,0,.08);border-right:1px solid var(--border);padding:36px 30px;display:flex;align-items:flex-start;justify-content:center;min-width:86px;flex-shrink:0;">
-          <span style="font-family:var(--serif);font-size:52px;font-weight:300;color:rgba(138,101,0,.55);line-height:1;">2</span>
+        <div style="background:rgba(26,50,112,.06);border-right:1px solid var(--border);padding:36px 30px;display:flex;align-items:flex-start;justify-content:center;min-width:86px;flex-shrink:0;">
+          <span style="font-family:var(--serif);font-size:52px;font-weight:300;color:rgba(26,50,112,.65);line-height:1;">2</span>
         </div>
         <div style="padding:36px 40px;">
           <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:6px;flex-wrap:wrap;">
@@ -1256,8 +1249,8 @@ footer {
 
       <!-- STEP 3 -->
       <div style="display:flex;border:1px solid var(--border);background:#ffffff;">
-        <div style="background:rgba(138,101,0,.08);border-right:1px solid var(--border);padding:36px 30px;display:flex;align-items:flex-start;justify-content:center;min-width:86px;flex-shrink:0;">
-          <span style="font-family:var(--serif);font-size:52px;font-weight:300;color:rgba(138,101,0,.55);line-height:1;">3</span>
+        <div style="background:rgba(26,50,112,.06);border-right:1px solid var(--border);padding:36px 30px;display:flex;align-items:flex-start;justify-content:center;min-width:86px;flex-shrink:0;">
+          <span style="font-family:var(--serif);font-size:52px;font-weight:300;color:rgba(26,50,112,.65);line-height:1;">3</span>
         </div>
         <div style="padding:36px 40px;">
           <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:6px;flex-wrap:wrap;">
@@ -1267,7 +1260,7 @@ footer {
           <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:16px;">
             <li style="font-size:14px;color:rgba(28,26,23,.7);line-height:1.7;padding-left:16px;position:relative;">
               <span style="color:var(--gold);font-weight:700;margin-right:8px;font-size:16px;">›</span>
-              Open the <a href="registration.html" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,168,76,.3);">registration form</a> — use the <span style="color:var(--gold);font-weight:600;">exact same e-mail</span> you used on the Stripe payment page
+              Open the <a href="registration.html" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(26,50,112,.2);">registration form</a> — use the <span style="color:var(--gold);font-weight:600;">exact same e-mail</span> you used on the Stripe payment page
             </li>
             <li style="font-size:14px;color:rgba(28,26,23,.7);line-height:1.7;padding-left:16px;position:relative;">
               <span style="color:var(--gold);font-weight:700;margin-right:8px;font-size:16px;">›</span>
@@ -1295,8 +1288,8 @@ footer {
 
       <!-- STEP 4 -->
       <div style="display:flex;border:1px solid var(--border);background:#ffffff;">
-        <div style="background:rgba(138,101,0,.08);border-right:1px solid var(--border);padding:36px 30px;display:flex;align-items:flex-start;justify-content:center;min-width:86px;flex-shrink:0;">
-          <span style="font-family:var(--serif);font-size:52px;font-weight:300;color:rgba(138,101,0,.55);line-height:1;">4</span>
+        <div style="background:rgba(26,50,112,.06);border-right:1px solid var(--border);padding:36px 30px;display:flex;align-items:flex-start;justify-content:center;min-width:86px;flex-shrink:0;">
+          <span style="font-family:var(--serif);font-size:52px;font-weight:300;color:rgba(26,50,112,.65);line-height:1;">4</span>
         </div>
         <div style="padding:36px 40px;">
           <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:6px;flex-wrap:wrap;">
@@ -1349,7 +1342,7 @@ footer {
       <!-- Essential -->
       <div class="pricing-card" style="display:flex;flex-direction:column;">
         <div class="pricing-tier">Essential</div>
-        <div class="pricing-price"><sup>$</sup>9<span style="font-size:36px">.97</span></div>
+        <div class="pricing-price"><sup>$</sup>5<span style="font-size:36px">.97</span></div>
         <div class="pricing-period">per month, billed monthly</div>
         <div class="pricing-divider"></div>
         <ul class="pricing-features" style="flex:1;">
@@ -1363,9 +1356,8 @@ footer {
 
       <!-- Professional -->
       <div class="pricing-card featured" style="display:flex;flex-direction:column;">
-        <div class="pricing-badge">Most popular</div>
-        <div class="pricing-tier">Professional</div>
-        <div class="pricing-price"><sup>$</sup>14<span style="font-size:36px">.97</span></div>
+                <div class="pricing-tier">Professional</div>
+        <div class="pricing-price"><sup>$</sup>9<span style="font-size:36px">.97</span></div>
         <div class="pricing-period">per month, billed monthly</div>
         <div class="pricing-divider"></div>
         <ul class="pricing-features" style="flex:1;">
