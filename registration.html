@@ -579,20 +579,14 @@ document.getElementById('global-kw-section-label').style.display = 'none';
 // PDF options handled server-side based on plan
 
 // ═══════════════════════════════════════════════════════
-// HIERARCHY DATA (loaded from hierarchy.json + subfield_mapping.json)
+// HIERARCHY DATA (loaded from subfield_mapping.json only)
 // ═══════════════════════════════════════════════════════
-let H  = {};   // domain → field → subfield → topic → journals (hierarchy.json — used for domain/field menus)
-let SM = {};   // domain → field → subfield → {j:[journals], k:"keyword|pool"} (subfield_mapping.json)
+let SM = {};   // domain → field → subfield → {j:[journals], k:"keyword|pool", tm:{topic_main: "kw|pool"}}
 
 async function loadHierarchy() {
   try {
-    const [hRes, smRes] = await Promise.all([
-      fetch('hierarchy.json'),
-      fetch('subfield_mapping.json')
-    ]);
-    if (!hRes.ok)  throw new Error('hierarchy.json not found');
+    const smRes = await fetch('subfield_mapping.json');
     if (!smRes.ok) throw new Error('subfield_mapping.json not found');
-    H  = await hRes.json();
     SM = await smRes.json();
     populateDomains();
     document.getElementById('loading-overlay').classList.add('hidden');
@@ -602,10 +596,52 @@ async function loadHierarchy() {
   }
 }
 
+// ═══════════════════════════════════════════════════════
+// SUBFIELD / TOPIC-MAIN MATCHING (used by both plans)
+// ═══════════════════════════════════════════════════════
+function getMatchedSubfields(domain, field, keywords) {
+  // Returns [{sf, score, total}] sorted by score desc.
+  // score = how many user keywords appear in this subfield's pool.
+  const fieldData = SM[domain]?.[field];
+  if (!fieldData || keywords.length === 0) return [];
+
+  const kws = keywords.map(k => k.toLowerCase());
+  const matched = [];
+
+  for (const [sf, data] of Object.entries(fieldData)) {
+    const pool = (data.k || '').toLowerCase();
+    let score = 0;
+    kws.forEach(kw => { if (pool.includes(kw)) score++; });
+    if (score > 0) matched.push({ sf, score, total: kws.length });
+  }
+  return matched.sort((a, b) => b.score - a.score || a.sf.localeCompare(b.sf));
+}
+
+function getMatchedTopicMains(domain, field, subfields, keywords) {
+  // Returns [{tm, sf, score, total}] — topic_mains under chosen subfields whose pool matches at least one keyword.
+  const fieldData = SM[domain]?.[field];
+  if (!fieldData || keywords.length === 0 || subfields.length === 0) return [];
+
+  const kws = keywords.map(k => k.toLowerCase());
+  const matched = [];
+
+  subfields.forEach(sf => {
+    const tmMap = fieldData[sf]?.tm;
+    if (!tmMap) return;
+    for (const [tm, pool] of Object.entries(tmMap)) {
+      const p = (pool || '').toLowerCase();
+      let score = 0;
+      kws.forEach(kw => { if (p.includes(kw)) score++; });
+      if (score > 0) matched.push({ tm, sf, score, total: kws.length });
+    }
+  });
+  return matched.sort((a, b) => b.score - a.score || a.tm.localeCompare(b.tm));
+}
+
 function populateDomains() {
   // Essential: populate the global domain selector
   const sel = document.getElementById('domain');
-  Object.keys(H).sort().forEach(d => {
+  Object.keys(SM).sort().forEach(d => {
     const o = document.createElement('option');
     o.value = o.textContent = d;
     sel.appendChild(o);
@@ -732,8 +768,8 @@ function renderDomainSlots() {
     fieldSel.style.cssText = domainSel.style.cssText;
     fieldSel.innerHTML = '<option value="">Select field…</option>';
     fieldSel.disabled = !slot.domain;
-    if (slot.domain && H[slot.domain]) {
-      Object.keys(H[slot.domain]).sort().forEach(f => {
+    if (slot.domain && SM[slot.domain]) {
+      Object.keys(SM[slot.domain]).sort().forEach(f => {
         const o = document.createElement('option');
         o.value = o.textContent = f;
         if (f === slot.field) o.selected = true;
@@ -898,11 +934,47 @@ function renderDomainSlots() {
     blField.appendChild(blTagWrap);
     blField.appendChild(blCounter);
 
-    // ── Append in new order: field → keywords → subfields → blacklist ──
+    // ── Topic Main panel (per domain slot) ─────────────────────────────
+    const tmWrap = document.createElement('div');
+    tmWrap.className = 'field';
+    tmWrap.style.marginTop = '16px';
+    const tmLabel = document.createElement('label');
+    tmLabel.style.cssText = 'font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;';
+    tmLabel.innerHTML = `Specific topics <span style="color:var(--gold);font-size:10px;font-weight:400;letter-spacing:.04em;text-transform:none">— refine your selection</span>`;
+    const tmPanel = document.createElement('div');
+    tmPanel.className = 'multi-panel disabled';
+    const tmSearch = document.createElement('input');
+    tmSearch.className = 'multi-search';
+    tmSearch.placeholder = 'Search topics…';
+    tmSearch.disabled = true;
+    const tmList = document.createElement('div');
+    tmList.className = 'multi-list';
+    const tmEmpty = document.createElement('div');
+    tmEmpty.className = 'multi-empty';
+    tmEmpty.textContent = 'Select subfields above — relevant topics will appear here.';
+    tmEmpty.style.display = 'block';
+    tmList.appendChild(tmEmpty);
+    tmPanel.appendChild(tmSearch);
+    tmPanel.appendChild(tmList);
+    const tmCount = document.createElement('div');
+    tmCount.className = 'multi-count';
+    tmCount.textContent = '0 selected';
+    tmSearch.oninput = () => {
+      const q = tmSearch.value.toLowerCase();
+      tmList.querySelectorAll('.multi-option').forEach(o => {
+        o.classList.toggle('hidden', !o.dataset.value.toLowerCase().includes(q));
+      });
+    };
+    tmWrap.appendChild(tmLabel);
+    tmWrap.appendChild(tmPanel);
+    tmWrap.appendChild(tmCount);
+
+    // ── Append in user-requested order: field → kw → bl → subfields → tm ──
     box.appendChild(fieldWrap);
     box.appendChild(kwField);
-    box.appendChild(subfieldWrap);
     box.appendChild(blField);
+    box.appendChild(subfieldWrap);
+    box.appendChild(tmWrap);
 
     slot.slotEl = box;
     slot._subfieldPanel  = subfieldPanel;
@@ -912,6 +984,10 @@ function renderDomainSlots() {
     slot._sfSearch       = sfSearch;
     slot._kwInput        = kwInput;
     slot._blInput        = blInput;
+    slot._tmPanel        = tmPanel;
+    slot._tmList         = tmList;
+    slot._tmCount        = tmCount;
+    slot._tmSearch       = tmSearch;
 
     if (slot.field && slot.keywords.length > 0) {
       renderSlotSubfields(slot, idx);
@@ -1004,8 +1080,8 @@ function renderFieldSlots() {
         document.getElementById('domain').value = slot.domain;
         fieldSel.innerHTML = '<option value="">Select field...</option>';
         fieldSel.disabled = !slot.domain;
-        if (slot.domain && H[slot.domain]) {
-          Object.keys(H[slot.domain]).sort().forEach(f => {
+        if (slot.domain && SM[slot.domain]) {
+          Object.keys(SM[slot.domain]).sort().forEach(f => {
             const o = document.createElement('option');
             o.value = o.textContent = f;
             fieldSel.appendChild(o);
@@ -1036,8 +1112,8 @@ function renderFieldSlots() {
     const activeDomain = PLAN === 'essential' ? slot.domain : document.getElementById('domain').value;
     fieldSel.innerHTML = '<option value="">Select field...</option>';
     fieldSel.disabled = !activeDomain;
-    if (activeDomain && H[activeDomain]) {
-      Object.keys(H[activeDomain]).sort().forEach(f => {
+    if (activeDomain && SM[activeDomain]) {
+      Object.keys(SM[activeDomain]).sort().forEach(f => {
         const o = document.createElement('option');
         o.value = o.textContent = f;
         if (f === slot.field) o.selected = true;
@@ -1053,6 +1129,7 @@ function renderFieldSlots() {
     };
     fieldWrap.appendChild(fieldLabel);
     fieldWrap.appendChild(fieldSel);
+    box.appendChild(fieldWrap);
 
     // ── Per-slot keywords — BEFORE subfields ──────────────────────────
     {
@@ -1174,7 +1251,7 @@ function renderFieldSlots() {
     subfieldWrap.appendChild(subfieldPanel);
     subfieldWrap.appendChild(subfieldCount);
     subfieldWrap.appendChild(subfieldBadges);
-    box.appendChild(subfieldWrap);
+    // subfieldWrap is appended later (after blacklist) to honor the user-requested order
 
     // ── Keyword blacklist ──────────────────────────────────────────────
     {
@@ -1229,12 +1306,55 @@ function renderFieldSlots() {
       slot._blInput = blInput;
     } // end blacklist block
 
+    // ── Topic Main panel (per slot) ────────────────────────────────────
+    const tmWrap = document.createElement('div');
+    tmWrap.className = 'field';
+    tmWrap.style.marginTop = '16px';
+    const tmLabel = document.createElement('label');
+    tmLabel.style.cssText = 'font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;';
+    tmLabel.innerHTML = `Specific topics <span style="color:var(--gold);font-size:10px;font-weight:400;letter-spacing:.04em;text-transform:none">— refine your selection</span>`;
+    const tmPanel = document.createElement('div');
+    tmPanel.className = 'multi-panel disabled';
+    const tmSearch = document.createElement('input');
+    tmSearch.className = 'multi-search';
+    tmSearch.placeholder = 'Search topics…';
+    tmSearch.disabled = true;
+    const tmList = document.createElement('div');
+    tmList.className = 'multi-list';
+    const tmEmpty = document.createElement('div');
+    tmEmpty.className = 'multi-empty';
+    tmEmpty.textContent = 'Select subfields above — relevant topics will appear here.';
+    tmEmpty.style.display = 'block';
+    tmList.appendChild(tmEmpty);
+    tmPanel.appendChild(tmSearch);
+    tmPanel.appendChild(tmList);
+    const tmCount = document.createElement('div');
+    tmCount.className = 'multi-count';
+    tmCount.textContent = '0 selected';
+    tmSearch.oninput = () => {
+      const q = tmSearch.value.toLowerCase();
+      tmList.querySelectorAll('.multi-option').forEach(o => {
+        o.classList.toggle('hidden', !o.dataset.value.toLowerCase().includes(q));
+      });
+    };
+    tmWrap.appendChild(tmLabel);
+    tmWrap.appendChild(tmPanel);
+    tmWrap.appendChild(tmCount);
+
+    // Final append order: subfields → topic mains (after blacklist already appended above)
+    box.appendChild(subfieldWrap);
+    box.appendChild(tmWrap);
+
     slot.slotEl = box;
     slot._subfieldPanel  = subfieldPanel;
     slot._subfieldList   = subfieldList;
     slot._subfieldCount  = subfieldCount;
     slot._subfieldBadges = subfieldBadges;
     slot._sfSearch       = sfSearch;
+    slot._tmPanel        = tmPanel;
+    slot._tmList         = tmList;
+    slot._tmCount        = tmCount;
+    slot._tmSearch       = tmSearch;
 
     if (slot.field && (slot.keywords || []).length > 0) {
       renderSlotSubfields(slot, idx);
@@ -1269,48 +1389,43 @@ function renderSlotSubfields(slot, slotIdx) {
 
   const domain   = slot.domain;
   const field    = slot.field;
-  const keywords = (slot.keywords || []).map(k => k.toLowerCase());
+  const keywords = (slot.keywords || []);
 
-  // Guard: no domain/field selected
+  // Tracking sets: explicit user actions persist across keyword changes
+  if (!slot.subfieldsExcluded) slot.subfieldsExcluded = [];
+
+  // Guard: no domain/field
   if (!domain || !field) {
     panel.classList.add('disabled');
     if (slot._sfSearch) slot._sfSearch.disabled = true;
     if (empty) { empty.textContent = 'Select a domain and field first.'; empty.style.display = 'block'; }
+    slot.subfields = [];
+    renderSlotTopicMains(slot, slotIdx);
     return;
   }
 
-  // Guard: no keywords yet
+  // Guard: no keywords
   if (keywords.length === 0) {
     panel.classList.add('disabled');
     if (slot._sfSearch) slot._sfSearch.disabled = true;
-    if (empty) { empty.textContent = 'Add keywords above to discover relevant subfields.'; empty.style.display = 'block'; }
+    if (empty) { empty.textContent = 'Add keywords above — matching subfields will appear here.'; empty.style.display = 'block'; }
+    slot.subfields = [];
+    renderSlotTopicMains(slot, slotIdx);
     return;
   }
 
-  // Guard: no mapping entry for this domain+field
-  const fieldData = SM[domain]?.[field];
-  if (!fieldData || Object.keys(fieldData).length === 0) {
+  // Get matched subfields (only those matching at least one keyword)
+  const matched = getMatchedSubfields(domain, field, keywords);
+
+  if (matched.length === 0) {
     panel.classList.add('disabled');
     if (slot._sfSearch) slot._sfSearch.disabled = true;
-    if (empty) { empty.textContent = 'No subfield data available for this field.'; empty.style.display = 'block'; }
-    return;
-  }
-
-  // Score each subfield by number of user keywords found in its pool
-  const scored = Object.entries(fieldData).map(([sf, data]) => {
-    const pool = (data.k || '').toLowerCase();
-    let score  = 0;
-    keywords.forEach(kw => { if (pool.includes(kw)) score++; });
-    return { sf, score };
-  });
-
-  // Matched subfields first (sorted by score desc), then unmatched (alphabetical, dimmed)
-  const withMatch = scored.filter(x => x.score > 0).sort((a, b) => b.score - a.score);
-  const noMatch   = scored.filter(x => x.score === 0).sort((a, b) => a.sf.localeCompare(b.sf));
-  const ordered   = [...withMatch, ...noMatch];
-
-  if (ordered.length === 0) {
-    if (empty) { empty.textContent = 'No subfields found for this combination.'; empty.style.display = 'block'; }
+    if (empty) {
+      empty.textContent = 'No subfields matched your keywords. Try broader terms or different keywords.';
+      empty.style.display = 'block';
+    }
+    slot.subfields = [];
+    renderSlotTopicMains(slot, slotIdx);
     return;
   }
 
@@ -1318,53 +1433,62 @@ function renderSlotSubfields(slot, slotIdx) {
   if (slot._sfSearch) slot._sfSearch.disabled = false;
   if (empty) empty.style.display = 'none';
 
-  ordered.forEach(({ sf, score }) => {
+  // Auto-select all matched subfields EXCEPT ones the user explicitly excluded.
+  // Respect the per-slot or per-plan limit.
+  const limit = LIM.subfields;
+  const allowedMatched = matched.filter(m => !slot.subfieldsExcluded.includes(m.sf));
+
+  // Build/refresh slot.subfields: keep order from `matched`, take up to limit
+  slot.subfields = allowedMatched.slice(0, limit).map(m => m.sf);
+
+  matched.forEach(({ sf, score, total }) => {
+    const isSelected = slot.subfields.includes(sf);
     const div = document.createElement('div');
-    div.className = 'multi-option' + (slot.subfields.includes(sf) ? ' selected' : '');
+    div.className = 'multi-option' + (isSelected ? ' selected' : '');
     div.dataset.value = sf;
 
     const cb = document.createElement('input');
     cb.type    = 'checkbox';
     cb.value   = sf;
-    cb.checked = slot.subfields.includes(sf);
-    if (cb.checked) { cb.style.background = 'var(--gold)'; cb.style.borderColor = 'var(--gold)'; }
+    cb.checked = isSelected;
+    if (isSelected) { cb.style.background = 'var(--gold)'; cb.style.borderColor = 'var(--gold)'; }
 
     const sp = document.createElement('span');
-    if (score > 0) {
-      const matchPct = Math.round(score / keywords.length * 100);
-      sp.innerHTML = `${sf} <small style="color:var(--gold);opacity:.7;font-size:10px;margin-left:6px">${matchPct}% match</small>`;
-    } else {
-      sp.textContent = sf;
-      sp.style.opacity = '.45';
-    }
+    const matchPct = Math.round(score / total * 100);
+    sp.innerHTML = `${sf} <small style="color:var(--gold);opacity:.7;font-size:10px;margin-left:6px">${matchPct}% match · ${score}/${total} kw</small>`;
 
     div.appendChild(cb);
     div.appendChild(sp);
 
     const toggle = (checked) => {
       if (checked) {
+        // Re-include this subfield
         cb.style.background = 'var(--gold)'; cb.style.borderColor = 'var(--gold)';
-        const atLimit = PLAN === 'professional'
-          ? slot.subfields.length >= LIM.subfields
-          : state.fieldSlots.reduce((a, s) => a + s.subfields.length, 0) >= LIM.subfields;
-        if (atLimit) {
+        const total = PLAN === 'professional'
+          ? slot.subfields.length
+          : state.fieldSlots.reduce((a, s) => a + s.subfields.length, 0);
+        if (total >= limit) {
           cb.checked = false;
           cb.style.background = '#fff'; cb.style.borderColor = 'rgba(120,95,20,0.4)';
           div.classList.remove('selected');
-          countEl.textContent = `⚠ Max ${LIM.subfields} subfields per domain`;
+          countEl.textContent = `⚠ Max ${limit} subfields ${PLAN === 'professional' ? 'per domain' : ''}`;
           setTimeout(() => updateSlotCount(slot, countEl), 2500);
           return;
         }
         if (!slot.subfields.includes(sf)) slot.subfields.push(sf);
+        slot.subfieldsExcluded = slot.subfieldsExcluded.filter(x => x !== sf);
         div.classList.add('selected');
       } else {
+        // Exclude
         cb.style.background = '#fff'; cb.style.borderColor = 'rgba(120,95,20,0.4)';
         const i = slot.subfields.indexOf(sf);
         if (i > -1) slot.subfields.splice(i, 1);
+        if (!slot.subfieldsExcluded.includes(sf)) slot.subfieldsExcluded.push(sf);
         div.classList.remove('selected');
       }
       updateSlotCount(slot, countEl);
       renderSlotBadges(slot, badgesEl, list, slotIdx);
+      renderSlotTopicMains(slot, slotIdx);
       rebuildJournals();
     };
 
@@ -1373,15 +1497,104 @@ function renderSlotSubfields(slot, slotIdx) {
     list.appendChild(div);
   });
 
-  // Drop any previously-selected subfields that are no longer in this field's data
-  const available = new Set(Object.keys(fieldData));
-  const hadMore   = slot.subfields.some(sf => !available.has(sf));
-  if (hadMore) {
-    slot.subfields = slot.subfields.filter(sf => available.has(sf));
-    rebuildJournals();
-  }
   updateSlotCount(slot, countEl);
   renderSlotBadges(slot, badgesEl, list, slotIdx);
+  renderSlotTopicMains(slot, slotIdx);
+  rebuildJournals();
+}
+
+
+// ═══════════════════════════════════════════════════════
+// TOPIC MAINS (per slot, appears after subfields are matched)
+// ═══════════════════════════════════════════════════════
+function renderSlotTopicMains(slot, slotIdx) {
+  const panel    = slot._tmPanel;
+  const list     = slot._tmList;
+  const countEl  = slot._tmCount;
+  if (!panel || !list) return;  // panel may not exist if slot was built before this feature
+
+  list.querySelectorAll('.multi-option').forEach(el => el.remove());
+  const empty = list.querySelector('.multi-empty');
+
+  if (!slot.topicMainsExcluded) slot.topicMainsExcluded = [];
+
+  const { domain, field } = slot;
+  const subfields = slot.subfields || [];
+  const keywords  = slot.keywords  || [];
+
+  // Hide entirely until prerequisites are met
+  if (!domain || !field || subfields.length === 0 || keywords.length === 0) {
+    panel.classList.add('disabled');
+    if (slot._tmSearch) slot._tmSearch.disabled = true;
+    if (empty) { empty.textContent = 'Select subfields above — relevant topics will appear here.'; empty.style.display = 'block'; }
+    slot.topicMains = [];
+    if (countEl) countEl.textContent = '0 selected';
+    return;
+  }
+
+  const matched = getMatchedTopicMains(domain, field, subfields, keywords);
+
+  if (matched.length === 0) {
+    panel.classList.add('disabled');
+    if (slot._tmSearch) slot._tmSearch.disabled = true;
+    if (empty) {
+      empty.textContent = 'No specific topics matched. Articles will be filtered by subfield + keywords only.';
+      empty.style.display = 'block';
+    }
+    slot.topicMains = [];
+    if (countEl) countEl.textContent = '0 selected';
+    return;
+  }
+
+  panel.classList.remove('disabled');
+  if (slot._tmSearch) slot._tmSearch.disabled = false;
+  if (empty) empty.style.display = 'none';
+
+  // Auto-select all matched except user-excluded
+  const allowed = matched.filter(m => !slot.topicMainsExcluded.includes(m.tm));
+  slot.topicMains = allowed.map(m => m.tm);
+
+  matched.forEach(({ tm, sf, score, total }) => {
+    const isSelected = slot.topicMains.includes(tm);
+    const div = document.createElement('div');
+    div.className = 'multi-option' + (isSelected ? ' selected' : '');
+    div.dataset.value = tm;
+
+    const cb = document.createElement('input');
+    cb.type    = 'checkbox';
+    cb.value   = tm;
+    cb.checked = isSelected;
+    if (isSelected) { cb.style.background = 'var(--gold)'; cb.style.borderColor = 'var(--gold)'; }
+
+    const sp = document.createElement('span');
+    const matchPct = Math.round(score / total * 100);
+    sp.innerHTML = `${tm} <small style="color:var(--muted);opacity:.7;font-size:10px;margin-left:6px">${sf} · ${matchPct}% match</small>`;
+
+    div.appendChild(cb);
+    div.appendChild(sp);
+
+    const toggle = (checked) => {
+      if (checked) {
+        cb.style.background = 'var(--gold)'; cb.style.borderColor = 'var(--gold)';
+        if (!slot.topicMains.includes(tm)) slot.topicMains.push(tm);
+        slot.topicMainsExcluded = slot.topicMainsExcluded.filter(x => x !== tm);
+        div.classList.add('selected');
+      } else {
+        cb.style.background = '#fff'; cb.style.borderColor = 'rgba(120,95,20,0.4)';
+        const i = slot.topicMains.indexOf(tm);
+        if (i > -1) slot.topicMains.splice(i, 1);
+        if (!slot.topicMainsExcluded.includes(tm)) slot.topicMainsExcluded.push(tm);
+        div.classList.remove('selected');
+      }
+      if (countEl) countEl.textContent = `${slot.topicMains.length} / ${matched.length} selected`;
+    };
+
+    cb.addEventListener('change', () => toggle(cb.checked));
+    div.addEventListener('click', e => { if (e.target !== cb) { cb.checked = !cb.checked; toggle(cb.checked); } });
+    list.appendChild(div);
+  });
+
+  if (countEl) countEl.textContent = `${slot.topicMains.length} / ${matched.length} selected`;
 }
 
 function updateSlotCount(slot, countEl) {
@@ -1586,13 +1799,10 @@ function resetMulti(which) {
 }
 
 function rebuildTopics() {
-  state.topics.length = 0;
-  const allTopics = new Set();
-  getAllSubfields().forEach(({domain, field, sf}) => {
-    if (H[domain]?.[field]?.[sf]) Object.keys(H[domain][field][sf]).forEach(t => allTopics.add(t));
-  });
-  resetMulti('topic');
-  if (allTopics.size > 0) buildMulti('topic', [...allTopics].sort());
+  // Legacy stub. Topic mains are now rendered per-slot via renderSlotTopicMains
+  // (see slot construction in renderDomainSlots / renderFieldSlots).
+  // The old global topic multi-select element, if present, is reset for safety.
+  if (typeof resetMulti === 'function') resetMulti('topic');
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1924,12 +2134,16 @@ document.getElementById('reg-form').addEventListener('submit', async function(e)
           domain:       sanitize(s.domain),
           field:        sanitize(s.field),
           subfields:    sanitizeTags(s.subfields, 3, 200),
+          topic_mains:  sanitizeTags(s.topicMains || [], 200, 200),
           keywords:     sanitizeTags(s.keywords || [], 15, 60),
           kw_blacklist: sanitizeTags(s.kw_blacklist || [], 500, 60)
         }))
       : state.fieldSlots.map(s => ({
-          field:     sanitize(s.field),
-          subfields: sanitizeTags(s.subfields, LIM.subfields, 200)
+          field:        sanitize(s.field),
+          subfields:    sanitizeTags(s.subfields, LIM.subfields, 200),
+          topic_mains:  sanitizeTags(s.topicMains || [], 200, 200),
+          keywords:     sanitizeTags(s.keywords || [], LIM.keywords, 60),
+          kw_blacklist: sanitizeTags(s.kw_blacklist || [], 500, 60)
         })),
     topics:       sanitizeTags(
       Array.from(new Set([...state.topics, ...topicPrefSystem.getTags()])),
