@@ -443,7 +443,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 4
         <div class="journal-list" id="journal-list"></div>
       </div>
 
-      <!-- Whitelist badges -->
       <div style="margin-top:20px">
         <div style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">
           Whitelisted journals <span style="font-weight:300;text-transform:none;font-size:11px;letter-spacing:0">(receive only these)</span>
@@ -453,7 +452,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 4
         </div>
       </div>
 
-      <!-- Blacklist badges -->
       <div style="margin-top:16px">
         <div style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">
           Blacklisted journals <span style="font-weight:300;text-transform:none;font-size:11px;letter-spacing:0">(never receive these)</span>
@@ -462,39 +460,38 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 4
           <span class="badges-empty" id="blacklist-empty">None excluded.</span>
         </div>
       </div>
-    </div>
+    </div><!-- /journal-section -->
 
-
-    <!-- ══ 4. KEYWORDS ══ -->
+    <!-- ══ 4. KEYWORDS (global — hidden for per-slot plans, kept for legacy) ══ -->
     <div class="section-label" id="global-kw-section-label">
       <div class="section-num">4</div>
       <div class="section-title">Keyword Filters</div>
       <div class="section-line"></div>
     </div>
     <div id="global-kw-section">
-    <div class="form-grid">
-      <div class="field full">
-        <label>
-          Keywords of Interest <span class="req">*</span>
-          <span class="lim" id="kw-limit-label"></span>
-        </label>
-        <div class="tag-wrap" id="kw-wrap" onclick="document.getElementById('kw-input').focus()">
-          <input class="tag-input" id="kw-input" placeholder="Type a keyword and press Enter or comma…" maxlength="60">
+      <div class="form-grid">
+        <div class="field full">
+          <label>
+            Keywords of Interest <span class="req">*</span>
+            <span class="lim" id="kw-limit-label"></span>
+          </label>
+          <div class="tag-wrap" id="kw-wrap" onclick="document.getElementById('kw-input').focus()">
+            <input class="tag-input" id="kw-input" placeholder="Type a keyword and press Enter or comma…" maxlength="60">
+          </div>
+          <div class="tag-counter" id="kw-counter">0 keywords</div>
+          <span class="hint">Articles whose titles contain any of these words will be prioritised. Press <strong>Enter</strong> or <strong>,</strong> to add each keyword.</span>
         </div>
-        <div class="tag-counter" id="kw-counter">0 keywords</div>
-        <span class="hint">Articles whose titles contain any of these words will be prioritised. Press <strong>Enter</strong> or <strong>,</strong> to add each keyword.</span>
-      </div>
-      <div class="field full">
-        <label>Keyword Blacklist <span style="font-weight:300;text-transform:none;font-size:11px;letter-spacing:0">(optional)</span></label>
-        <div class="tag-wrap" id="bl-wrap" onclick="document.getElementById('bl-input').focus()">
-          <input class="tag-input" id="bl-input" placeholder="Type a word to exclude and press Enter or comma…" maxlength="60">
+        <div class="field full">
+          <label>Keyword Blacklist <span style="font-weight:300;text-transform:none;font-size:11px;letter-spacing:0">(optional)</span></label>
+          <div class="tag-wrap" id="bl-wrap" onclick="document.getElementById('bl-input').focus()">
+            <input class="tag-input" id="bl-input" placeholder="Type a word to exclude and press Enter or comma…" maxlength="60">
+          </div>
+          <div class="tag-counter" id="bl-counter">0 excluded</div>
+          <span class="hint">Articles whose titles contain these words will never appear, regardless of other settings.</span>
         </div>
-        <div class="tag-counter" id="bl-counter">0 excluded</div>
-        <span class="hint">Articles whose titles contain these words will never appear, regardless of other settings.</span>
-      </div>
-    </div>
-    </div>
-    
+      </div><!-- /form-grid -->
+    </div><!-- /global-kw-section -->
+
     <!-- SUBMIT -->
     <div class="submit-row">
       <button type="submit" class="btn-submit" id="submit-btn">Register &amp; Subscribe</button>
@@ -895,6 +892,22 @@ function renderDomainSlots() {
     blField.appendChild(blTagWrap);
     blField.appendChild(blCounter);
 
+    // ── Append in order: field → kw → bl → subfields ──────────────────
+    box.appendChild(fieldWrap);
+    box.appendChild(kwField);
+    box.appendChild(blField);
+    box.appendChild(subfieldWrap);
+
+    // ── Wire slot refs BEFORE calling renderSlotSubfields ─────────────
+    slot.slotEl          = box;
+    slot._subfieldPanel  = subfieldPanel;
+    slot._subfieldList   = subfieldList;
+    slot._subfieldCount  = subfieldCount;
+    slot._subfieldBadges = subfieldBadges;
+    slot._sfSearch       = sfSearch;
+    slot._kwInput        = kwInput;
+    slot._blInput        = blInput;
+
     if (slot.field && slot.keywords.length > 0) {
       renderSlotSubfields(slot, idx);
     }
@@ -1208,6 +1221,16 @@ function renderFieldSlots() {
 
       slot._blInput = blInput;
     } // end blacklist block
+
+    // ── Append subfieldWrap + wire all slot refs ───────────────────────
+    box.appendChild(subfieldWrap);
+
+    slot.slotEl          = box;
+    slot._subfieldPanel  = subfieldPanel;
+    slot._subfieldList   = subfieldList;
+    slot._subfieldCount  = subfieldCount;
+    slot._subfieldBadges = subfieldBadges;
+    slot._sfSearch       = sfSearch;
 
     if (slot.field && (slot.keywords || []).length > 0) {
       renderSlotSubfields(slot, idx);
