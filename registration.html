@@ -221,8 +221,8 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 4
 .mode-btn.active{background:var(--gold);color:var(--black)}
 
 /* SUBMIT */
-.submit-row{display:flex;align-items:center;gap:16px;margin-top:40px;flex-wrap:wrap}
-.btn-submit{background:var(--gold);color:#ffffff;border:none;border-radius:5px;
+.submit-row{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:40px;text-align:center}
+.btn-submit{background:var(--gold);color:#ffffff;border:none;border-radius:5px;min-width:220px;
   padding:14px 36px;font-family:var(--sans);font-size:13px;font-weight:700;
   letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .1s}
 .btn-submit:hover{background:var(--gold-lt);transform:translateY(-1px)}
@@ -425,7 +425,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 4
       This section is entirely optional. Skip it to receive articles from all journals matching your selections above.
     </p>
 
-    <div id="journal-placeholder" style="padding:20px;background:#ffffff;border:1px solid var(--border);border-radius:5px;font-size:13px;color:var(--muted);text-align:center;">
+    <div id="journal-placeholder" style="padding:20px;background:#ffffff;border:1px solid var(--border);border-radius:5px;font-size:13px;color:var(--muted);text-align:center;width:100%;box-sizing:border-box;">
       Select your domain, field, and at least one subfield above to see the journals associated with your choices.
     </div>
 
@@ -498,7 +498,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 4
     <!-- SUBMIT -->
     <div class="submit-row">
       <button type="submit" class="btn-submit" id="submit-btn">Register &amp; Subscribe</button>
-      <span class="submit-note">Your data is used exclusively to filter and deliver your digest.<br>Return to this form anytime to update your preferences.</span>
+      <span class="submit-note" style="font-size:12px;color:var(--muted);text-align:center;max-width:420px;">Your data is used exclusively to filter and deliver your digest.<br>Return to this form anytime to update your preferences.</span>
     </div>
 
   </form>
@@ -696,9 +696,19 @@ function renderDomainSlots() {
     });
     domainSel.onchange = () => {
       slot.domain = domainSel.value;
-      slot.field = '';
+      slot.field  = '';
       slot.subfields = [];
-      renderDomainSlots();
+      // Repopulate field dropdown without full re-render (preserves closure idx)
+      fieldSel.innerHTML = '<option value="">Select field…</option>';
+      fieldSel.disabled = !slot.domain;
+      if (slot.domain && SM[slot.domain]) {
+        Object.keys(SM[slot.domain]).sort().forEach(f => {
+          const o = document.createElement('option');
+          o.value = o.textContent = f;
+          fieldSel.appendChild(o);
+        });
+      }
+      renderSlotSubfields(slot, idx);
       rebuildJournals();
     };
     const domainHint = document.createElement('span');
@@ -908,7 +918,8 @@ function renderDomainSlots() {
 function addFieldSlot() {
   if (PLAN === 'professional') { addDomainSlot(); return; }
   if (state.fieldSlots.length >= LIM.fields) return;
-  const slot = { domain: '', field: '', subfields: [], keywords: [], kw_blacklist: [] };
+  const curDomain = document.getElementById('domain')?.value || '';
+  const slot = { domain: curDomain, field: '', subfields: [], keywords: [], kw_blacklist: [] };
   state.fieldSlots.push(slot);
   renderFieldSlots();
 }
@@ -981,7 +992,7 @@ function renderFieldSlots() {
             fieldSel.appendChild(o);
           });
         }
-        renderSlotSubfields(slot, subfieldWrap, subfieldPanel, subfieldList, subfieldCount, subfieldBadges, idx);
+        renderSlotSubfields(slot, idx);
         rebuildJournals();
       };
       domainWrap.appendChild(domainLabel);
