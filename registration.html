@@ -562,15 +562,56 @@ document.getElementById('global-kw-section-label').style.display = 'none';
 let SM = {};   // domain → field → subfield → {j:[journals], k:"keyword|pool"}
 
 async function loadHierarchy() {
+  const overlay   = document.getElementById('loading-overlay');
+  const statusEl  = document.querySelector('.loading-text');
+
+  function setStatus(msg) {
+    if (statusEl) statusEl.textContent = msg;
+  }
+
   try {
-    const smRes = await fetch('subfield_mapping.json');
-    if (!smRes.ok) throw new Error('subfield_mapping.json not found');
-    SM = await smRes.json();
+    // ── 1. Fetch ──────────────────────────────────────────────────────────
+    setStatus('Loading taxonomy…');
+    const url = 'subfield_mapping.json';
+    let smRes;
+    try {
+      smRes = await fetch(url, { cache: 'default' });
+    } catch(netErr) {
+      throw new Error(`Network error fetching ${url}: ${netErr.message}`);
+    }
+
+    if (!smRes.ok) {
+      throw new Error(`File not found (HTTP ${smRes.status}): ${url}. Make sure subfield_mapping.json is in the same folder as this HTML file.`);
+    }
+
+    // ── 2. Parse — stream as text first so we get a clear parse error ─────
+    setStatus('Parsing taxonomy data…');
+    const text = await smRes.text();
+    try {
+      SM = JSON.parse(text);
+    } catch(parseErr) {
+      const preview = text.slice(0, 200).replace(/\n/g, '↵');
+      throw new Error(`JSON parse error: ${parseErr.message}. First 200 chars: ${preview}`);
+    }
+
+    if (!SM || typeof SM !== 'object' || Object.keys(SM).length === 0) {
+      throw new Error('subfield_mapping.json parsed but returned an empty object. Re-run create_mapping_files.py.');
+    }
+
+    // ── 3. Build UI ───────────────────────────────────────────────────────
+    setStatus('Building interface…');
     populateDomains();
-    document.getElementById('loading-overlay').classList.add('hidden');
+    overlay.classList.add('hidden');
+
   } catch(e) {
-    document.querySelector('.loading-text').textContent = 'Error loading taxonomy. Please refresh.';
-    console.error(e);
+    console.error('[loadHierarchy]', e);
+    setStatus(`⚠ ${e.message}`);
+    // Show a retry button
+    const retryBtn = document.createElement('button');
+    retryBtn.textContent = 'Try again';
+    retryBtn.style.cssText = 'margin-top:16px;padding:10px 24px;background:#b8892a;color:#fff;border:none;border-radius:5px;font-size:14px;cursor:pointer;';
+    retryBtn.onclick = () => { overlay.querySelector('.loading-text + button')?.remove(); loadHierarchy(); };
+    statusEl.insertAdjacentElement('afterend', retryBtn);
   }
 }
 
