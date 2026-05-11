@@ -139,7 +139,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 4
 .badge{display:inline-flex;align-items:center;gap:5px;border-radius:4px;
   padding:3px 9px;font-size:11px;font-weight:500;animation:badgeIn .15s ease}
 .badge.subfield{background:rgba(26,50,112,.08);border:1px solid rgba(26,50,112,.25);color:#0f2050}
-.badge.topic{background:rgba(26,50,112,.06);border:1px solid rgba(26,50,112,.2);color:#0f2050}
 .badge.journal-wl{background:rgba(45,106,79,.12);border:1px solid rgba(45,106,79,.35);color:#1a5c35}
 .badge.journal-bl{background:rgba(192,57,43,.12);border:1px solid rgba(192,57,43,.35);color:#8b1a0a}
 @keyframes badgeIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
@@ -407,28 +406,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 4
 
     <!-- Subfield limit label (hidden, updated by JS) -->
     <span class="lim" id="subfield-limit-label" style="display:none"></span>
-
-    <!-- Topic input + suggestions (global, across all fields) -->
-    <div class="form-grid" style="margin-top:20px;">
-      <div class="field full">
-        <label>Preferred Topics <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:11px">(optional — your own terms)</span></label>
-        <div class="tag-wrap" id="topic-pref-wrap" onclick="document.getElementById('topic-pref-input').focus()">
-          <input class="tag-input" id="topic-pref-input" placeholder="Type a topic and press Enter or comma…" maxlength="80">
         </div>
-        <div class="tag-counter" id="topic-pref-counter">0 topics</div>
-        <span class="hint">You can type your own preferences, even if they are not listed in suggestions.</span>
-      </div>
-
-      <div class="field full">
-        <label>Topic Suggestions <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:11px">(optional — from selected field/subfield)</span></label>
-        <div class="multi-panel disabled" id="topic-panel">
-          <input class="multi-search" id="topic-search" placeholder="Search topics…" oninput="filterMulti('topic')" disabled>
-          <div class="multi-list" id="topic-list">
-            <div class="multi-empty" id="topic-empty">Select subfields first.</div>
-          </div>
-        </div>
-        <div class="multi-count" id="topic-count">0 selected</div>
-        <div class="badges-wrap" id="topic-badges"></div>
       </div>
 
       <!-- Delivery scope removed to reduce decision friction -->
@@ -453,7 +431,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 4
 
     <div id="journal-section" style="display:none">
       <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px;">
-        These are the journals currently indexed under your selected topics. You can <span style="color:#a8d5b5">whitelist</span> journals to receive <strong style="color:var(--white)">only</strong> articles from them, or <span style="color:#e8a090">blacklist</span> journals to exclude them entirely. Leave both empty to receive all matching journals.
+        These are the journals currently indexed under your selected subfields. You can <span style="color:#a8d5b5">whitelist</span> journals to receive <strong style="color:var(--white)">only</strong> articles from them, or <span style="color:#e8a090">blacklist</span> journals to exclude them entirely. Leave both empty to receive all matching journals.
       </p>
 
       <div class="journal-panel">
@@ -581,7 +559,7 @@ document.getElementById('global-kw-section-label').style.display = 'none';
 // ═══════════════════════════════════════════════════════
 // HIERARCHY DATA (loaded from subfield_mapping.json only)
 // ═══════════════════════════════════════════════════════
-let SM = {};   // domain → field → subfield → {j:[journals], k:"keyword|pool", tm:{topic_main: "kw|pool"}}
+let SM = {};   // domain → field → subfield → {j:[journals], k:"keyword|pool"}
 
 async function loadHierarchy() {
   try {
@@ -597,7 +575,7 @@ async function loadHierarchy() {
 }
 
 // ═══════════════════════════════════════════════════════
-// SUBFIELD / TOPIC-MAIN MATCHING (used by both plans)
+// SUBFIELD MATCHING (used by both plans)
 // ═══════════════════════════════════════════════════════
 function getMatchedSubfields(domain, field, keywords) {
   // Returns [{sf, score, total}] sorted by score desc.
@@ -617,26 +595,6 @@ function getMatchedSubfields(domain, field, keywords) {
   return matched.sort((a, b) => b.score - a.score || a.sf.localeCompare(b.sf));
 }
 
-function getMatchedTopicMains(domain, field, subfields, keywords) {
-  // Returns [{tm, sf, score, total}] — topic_mains under chosen subfields whose pool matches at least one keyword.
-  const fieldData = SM[domain]?.[field];
-  if (!fieldData || keywords.length === 0 || subfields.length === 0) return [];
-
-  const kws = keywords.map(k => k.toLowerCase());
-  const matched = [];
-
-  subfields.forEach(sf => {
-    const tmMap = fieldData[sf]?.tm;
-    if (!tmMap) return;
-    for (const [tm, pool] of Object.entries(tmMap)) {
-      const p = (pool || '').toLowerCase();
-      let score = 0;
-      kws.forEach(kw => { if (p.includes(kw)) score++; });
-      if (score > 0) matched.push({ tm, sf, score, total: kws.length });
-    }
-  });
-  return matched.sort((a, b) => b.score - a.score || a.tm.localeCompare(b.tm));
-}
 
 function populateDomains() {
   // Essential: populate the global domain selector
@@ -659,7 +617,6 @@ function populateDomains() {
 // ═══════════════════════════════════════════════════════
 const state = {
   subfields: [],
-  topics:    [],
   journalWL: [],
   journalBL: []
 };
@@ -676,9 +633,7 @@ function onDomainChange() {
   if (PLAN === 'professional') return; // professional uses per-slot domains
   const domain = document.getElementById('domain').value;
   state.fieldSlots = [];
-  state.topics.length = 0;
   renderFieldSlots();
-  resetMulti('topic');
   clearJournals();
   if (domain) addFieldSlot();
 }
@@ -692,9 +647,7 @@ function addDomainSlot() {
 
 function removeDomainSlot(index) {
   state.domainSlots.splice(index, 1);
-  state.topics.length = 0;
   renderDomainSlots();
-  rebuildTopics();
   rebuildJournals();
 }
 
@@ -746,7 +699,6 @@ function renderDomainSlots() {
       slot.field = '';
       slot.subfields = [];
       renderDomainSlots();
-      rebuildTopics();
       rebuildJournals();
     };
     const domainHint = document.createElement('span');
@@ -780,7 +732,6 @@ function renderDomainSlots() {
       slot.field = fieldSel.value;
       slot.subfields = [];
       renderSlotSubfields(slot, idx);
-      rebuildTopics();
       rebuildJournals();
     };
     fieldWrap.appendChild(fieldLabel);
@@ -934,61 +885,6 @@ function renderDomainSlots() {
     blField.appendChild(blTagWrap);
     blField.appendChild(blCounter);
 
-    // ── Topic Main panel (per domain slot) ─────────────────────────────
-    const tmWrap = document.createElement('div');
-    tmWrap.className = 'field';
-    tmWrap.style.marginTop = '16px';
-    const tmLabel = document.createElement('label');
-    tmLabel.style.cssText = 'font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;';
-    tmLabel.innerHTML = `Specific topics <span style="color:var(--gold);font-size:10px;font-weight:400;letter-spacing:.04em;text-transform:none">— refine your selection</span>`;
-    const tmPanel = document.createElement('div');
-    tmPanel.className = 'multi-panel disabled';
-    const tmSearch = document.createElement('input');
-    tmSearch.className = 'multi-search';
-    tmSearch.placeholder = 'Search topics…';
-    tmSearch.disabled = true;
-    const tmList = document.createElement('div');
-    tmList.className = 'multi-list';
-    const tmEmpty = document.createElement('div');
-    tmEmpty.className = 'multi-empty';
-    tmEmpty.textContent = 'Select subfields above — relevant topics will appear here.';
-    tmEmpty.style.display = 'block';
-    tmList.appendChild(tmEmpty);
-    tmPanel.appendChild(tmSearch);
-    tmPanel.appendChild(tmList);
-    const tmCount = document.createElement('div');
-    tmCount.className = 'multi-count';
-    tmCount.textContent = '0 selected';
-    tmSearch.oninput = () => {
-      const q = tmSearch.value.toLowerCase();
-      tmList.querySelectorAll('.multi-option').forEach(o => {
-        o.classList.toggle('hidden', !o.dataset.value.toLowerCase().includes(q));
-      });
-    };
-    tmWrap.appendChild(tmLabel);
-    tmWrap.appendChild(tmPanel);
-    tmWrap.appendChild(tmCount);
-
-    // ── Append in user-requested order: field → kw → bl → subfields → tm ──
-    box.appendChild(fieldWrap);
-    box.appendChild(kwField);
-    box.appendChild(blField);
-    box.appendChild(subfieldWrap);
-    box.appendChild(tmWrap);
-
-    slot.slotEl = box;
-    slot._subfieldPanel  = subfieldPanel;
-    slot._subfieldList   = subfieldList;
-    slot._subfieldCount  = subfieldCount;
-    slot._subfieldBadges = subfieldBadges;
-    slot._sfSearch       = sfSearch;
-    slot._kwInput        = kwInput;
-    slot._blInput        = blInput;
-    slot._tmPanel        = tmPanel;
-    slot._tmList         = tmList;
-    slot._tmCount        = tmCount;
-    slot._tmSearch       = tmSearch;
-
     if (slot.field && slot.keywords.length > 0) {
       renderSlotSubfields(slot, idx);
     }
@@ -1020,9 +916,7 @@ function addFieldSlot() {
 function removeFieldSlot(index) {
   if (PLAN === 'professional') { removeDomainSlot(index); return; }
   state.fieldSlots.splice(index, 1);
-  state.topics.length = 0;
   renderFieldSlots();
-  rebuildTopics();
   rebuildJournals();
 }
 
@@ -1088,7 +982,6 @@ function renderFieldSlots() {
           });
         }
         renderSlotSubfields(slot, subfieldWrap, subfieldPanel, subfieldList, subfieldCount, subfieldBadges, idx);
-        rebuildTopics();
         rebuildJournals();
       };
       domainWrap.appendChild(domainLabel);
@@ -1124,7 +1017,6 @@ function renderFieldSlots() {
       slot.field = fieldSel.value;
       slot.subfields = [];
       renderSlotSubfields(slot, idx);
-      rebuildTopics();
       rebuildJournals();
     };
     fieldWrap.appendChild(fieldLabel);
@@ -1306,56 +1198,6 @@ function renderFieldSlots() {
       slot._blInput = blInput;
     } // end blacklist block
 
-    // ── Topic Main panel (per slot) ────────────────────────────────────
-    const tmWrap = document.createElement('div');
-    tmWrap.className = 'field';
-    tmWrap.style.marginTop = '16px';
-    const tmLabel = document.createElement('label');
-    tmLabel.style.cssText = 'font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;';
-    tmLabel.innerHTML = `Specific topics <span style="color:var(--gold);font-size:10px;font-weight:400;letter-spacing:.04em;text-transform:none">— refine your selection</span>`;
-    const tmPanel = document.createElement('div');
-    tmPanel.className = 'multi-panel disabled';
-    const tmSearch = document.createElement('input');
-    tmSearch.className = 'multi-search';
-    tmSearch.placeholder = 'Search topics…';
-    tmSearch.disabled = true;
-    const tmList = document.createElement('div');
-    tmList.className = 'multi-list';
-    const tmEmpty = document.createElement('div');
-    tmEmpty.className = 'multi-empty';
-    tmEmpty.textContent = 'Select subfields above — relevant topics will appear here.';
-    tmEmpty.style.display = 'block';
-    tmList.appendChild(tmEmpty);
-    tmPanel.appendChild(tmSearch);
-    tmPanel.appendChild(tmList);
-    const tmCount = document.createElement('div');
-    tmCount.className = 'multi-count';
-    tmCount.textContent = '0 selected';
-    tmSearch.oninput = () => {
-      const q = tmSearch.value.toLowerCase();
-      tmList.querySelectorAll('.multi-option').forEach(o => {
-        o.classList.toggle('hidden', !o.dataset.value.toLowerCase().includes(q));
-      });
-    };
-    tmWrap.appendChild(tmLabel);
-    tmWrap.appendChild(tmPanel);
-    tmWrap.appendChild(tmCount);
-
-    // Final append order: subfields → topic mains (after blacklist already appended above)
-    box.appendChild(subfieldWrap);
-    box.appendChild(tmWrap);
-
-    slot.slotEl = box;
-    slot._subfieldPanel  = subfieldPanel;
-    slot._subfieldList   = subfieldList;
-    slot._subfieldCount  = subfieldCount;
-    slot._subfieldBadges = subfieldBadges;
-    slot._sfSearch       = sfSearch;
-    slot._tmPanel        = tmPanel;
-    slot._tmList         = tmList;
-    slot._tmCount        = tmCount;
-    slot._tmSearch       = tmSearch;
-
     if (slot.field && (slot.keywords || []).length > 0) {
       renderSlotSubfields(slot, idx);
     }
@@ -1400,7 +1242,6 @@ function renderSlotSubfields(slot, slotIdx) {
     if (slot._sfSearch) slot._sfSearch.disabled = true;
     if (empty) { empty.textContent = 'Select a domain and field first.'; empty.style.display = 'block'; }
     slot.subfields = [];
-    renderSlotTopicMains(slot, slotIdx);
     return;
   }
 
@@ -1410,7 +1251,6 @@ function renderSlotSubfields(slot, slotIdx) {
     if (slot._sfSearch) slot._sfSearch.disabled = true;
     if (empty) { empty.textContent = 'Add keywords above — matching subfields will appear here.'; empty.style.display = 'block'; }
     slot.subfields = [];
-    renderSlotTopicMains(slot, slotIdx);
     return;
   }
 
@@ -1425,7 +1265,6 @@ function renderSlotSubfields(slot, slotIdx) {
       empty.style.display = 'block';
     }
     slot.subfields = [];
-    renderSlotTopicMains(slot, slotIdx);
     return;
   }
 
@@ -1488,7 +1327,6 @@ function renderSlotSubfields(slot, slotIdx) {
       }
       updateSlotCount(slot, countEl);
       renderSlotBadges(slot, badgesEl, list, slotIdx);
-      renderSlotTopicMains(slot, slotIdx);
       rebuildJournals();
     };
 
@@ -1499,103 +1337,10 @@ function renderSlotSubfields(slot, slotIdx) {
 
   updateSlotCount(slot, countEl);
   renderSlotBadges(slot, badgesEl, list, slotIdx);
-  renderSlotTopicMains(slot, slotIdx);
   rebuildJournals();
 }
 
 
-// ═══════════════════════════════════════════════════════
-// TOPIC MAINS (per slot, appears after subfields are matched)
-// ═══════════════════════════════════════════════════════
-function renderSlotTopicMains(slot, slotIdx) {
-  const panel    = slot._tmPanel;
-  const list     = slot._tmList;
-  const countEl  = slot._tmCount;
-  if (!panel || !list) return;  // panel may not exist if slot was built before this feature
-
-  list.querySelectorAll('.multi-option').forEach(el => el.remove());
-  const empty = list.querySelector('.multi-empty');
-
-  if (!slot.topicMainsExcluded) slot.topicMainsExcluded = [];
-
-  const { domain, field } = slot;
-  const subfields = slot.subfields || [];
-  const keywords  = slot.keywords  || [];
-
-  // Hide entirely until prerequisites are met
-  if (!domain || !field || subfields.length === 0 || keywords.length === 0) {
-    panel.classList.add('disabled');
-    if (slot._tmSearch) slot._tmSearch.disabled = true;
-    if (empty) { empty.textContent = 'Select subfields above — relevant topics will appear here.'; empty.style.display = 'block'; }
-    slot.topicMains = [];
-    if (countEl) countEl.textContent = '0 selected';
-    return;
-  }
-
-  const matched = getMatchedTopicMains(domain, field, subfields, keywords);
-
-  if (matched.length === 0) {
-    panel.classList.add('disabled');
-    if (slot._tmSearch) slot._tmSearch.disabled = true;
-    if (empty) {
-      empty.textContent = 'No specific topics matched. Articles will be filtered by subfield + keywords only.';
-      empty.style.display = 'block';
-    }
-    slot.topicMains = [];
-    if (countEl) countEl.textContent = '0 selected';
-    return;
-  }
-
-  panel.classList.remove('disabled');
-  if (slot._tmSearch) slot._tmSearch.disabled = false;
-  if (empty) empty.style.display = 'none';
-
-  // Auto-select all matched except user-excluded
-  const allowed = matched.filter(m => !slot.topicMainsExcluded.includes(m.tm));
-  slot.topicMains = allowed.map(m => m.tm);
-
-  matched.forEach(({ tm, sf, score, total }) => {
-    const isSelected = slot.topicMains.includes(tm);
-    const div = document.createElement('div');
-    div.className = 'multi-option' + (isSelected ? ' selected' : '');
-    div.dataset.value = tm;
-
-    const cb = document.createElement('input');
-    cb.type    = 'checkbox';
-    cb.value   = tm;
-    cb.checked = isSelected;
-    if (isSelected) { cb.style.background = 'var(--gold)'; cb.style.borderColor = 'var(--gold)'; }
-
-    const sp = document.createElement('span');
-    const matchPct = Math.round(score / total * 100);
-    sp.innerHTML = `${tm} <small style="color:var(--muted);opacity:.7;font-size:10px;margin-left:6px">${sf} · ${matchPct}% match</small>`;
-
-    div.appendChild(cb);
-    div.appendChild(sp);
-
-    const toggle = (checked) => {
-      if (checked) {
-        cb.style.background = 'var(--gold)'; cb.style.borderColor = 'var(--gold)';
-        if (!slot.topicMains.includes(tm)) slot.topicMains.push(tm);
-        slot.topicMainsExcluded = slot.topicMainsExcluded.filter(x => x !== tm);
-        div.classList.add('selected');
-      } else {
-        cb.style.background = '#fff'; cb.style.borderColor = 'rgba(120,95,20,0.4)';
-        const i = slot.topicMains.indexOf(tm);
-        if (i > -1) slot.topicMains.splice(i, 1);
-        if (!slot.topicMainsExcluded.includes(tm)) slot.topicMainsExcluded.push(tm);
-        div.classList.remove('selected');
-      }
-      if (countEl) countEl.textContent = `${slot.topicMains.length} / ${matched.length} selected`;
-    };
-
-    cb.addEventListener('change', () => toggle(cb.checked));
-    div.addEventListener('click', e => { if (e.target !== cb) { cb.checked = !cb.checked; toggle(cb.checked); } });
-    list.appendChild(div);
-  });
-
-  if (countEl) countEl.textContent = `${slot.topicMains.length} / ${matched.length} selected`;
-}
 
 function updateSlotCount(slot, countEl) {
   if (PLAN === 'professional') {
@@ -1641,7 +1386,6 @@ function renderSlotBadges(slot, badgesEl, list, slotIdx) {
     }
     updateSlotCount(s, s._subfieldCount);
     renderSlotBadges(s, s._subfieldBadges, s._subfieldList, si);
-    rebuildTopics();
     rebuildJournals();
   });
 }
@@ -1697,7 +1441,7 @@ function buildMulti(which, items) {
 }
 
 function toggleSel(which, value, checked) {
-  const arr     = which === 'subfield' ? state.subfields : state.topics;
+  const arr     = state.subfields;
   const limit   = which === 'subfield' ? LIM.subfields : null;
 
   if (checked) {
@@ -1718,7 +1462,7 @@ function toggleSel(which, value, checked) {
   syncCheckboxes(which);
   renderBadges(which);
   updateCount(which);
-  if (which === 'subfield') { rebuildTopics(); rebuildJournals(); }
+  if (which === 'subfield') { rebuildJournals(); }
 }
 
 function showLimitWarning(which, limit) {
@@ -1730,7 +1474,7 @@ function showLimitWarning(which, limit) {
 }
 
 function syncCheckboxes(which) {
-  const arr = which === 'subfield' ? state.subfields : state.topics;
+  const arr = state.subfields;
   document.querySelectorAll(`#${which}-list .multi-option`).forEach(opt => {
     const sel = arr.includes(opt.dataset.value);
     opt.querySelector('input').checked = sel;
@@ -1739,7 +1483,7 @@ function syncCheckboxes(which) {
 }
 
 function renderBadges(which) {
-  const arr  = which === 'subfield' ? state.subfields : state.topics;
+  const arr  = state.subfields;
   const wrap = document.getElementById(which + '-badges');
   wrap.innerHTML = '';
   arr.forEach(val => {
@@ -1756,20 +1500,19 @@ function badgeRemove(e) {
   if (!btn) return;
   const which = btn.dataset.which;
   const val   = decodeURIComponent(btn.dataset.val);
-  const arr   = which === 'subfield' ? state.subfields : state.topics;
+  const arr   = state.subfields;
   const i     = arr.indexOf(val);
   if (i > -1) arr.splice(i, 1);
   syncCheckboxes(which);
   renderBadges(which);
   updateCount(which);
-  if (which === 'subfield') { rebuildTopics(); rebuildJournals(); }
+  if (which === 'subfield') { rebuildJournals(); }
 }
 
 function updateCount(which) {
-  const arr = which === 'subfield' ? state.subfields : state.topics;
+  const arr = state.subfields;
   const el  = document.getElementById(which + '-count');
-  const lim = which === 'subfield' ? LIM.subfields : null;
-  el.textContent = `${arr.length}${lim ? ' / ' + lim : ''} selected`;
+  el.textContent = `${arr.length} / ${LIM.subfields} selected`;
   el.className   = 'multi-count' + (lim && arr.length >= lim ? ' at-limit' : '');
 }
 
@@ -1783,8 +1526,7 @@ function filterMulti(which) {
 }
 
 function resetMulti(which) {
-  if (which === 'subfield') state.subfields.length = 0;
-  else state.topics.length = 0;
+  state.subfields.length = 0;
   const panel  = document.getElementById(which + '-panel');
   const list   = document.getElementById(which + '-list');
   const search = document.getElementById(which + '-search');
@@ -1798,12 +1540,6 @@ function resetMulti(which) {
   updateCount(which);
 }
 
-function rebuildTopics() {
-  // Legacy stub. Topic mains are now rendered per-slot via renderSlotTopicMains
-  // (see slot construction in renderDomainSlots / renderFieldSlots).
-  // The old global topic multi-select element, if present, is reset for safety.
-  if (typeof resetMulti === 'function') resetMulti('topic');
-}
 
 // ═══════════════════════════════════════════════════════
 // JOURNALS
@@ -1967,8 +1703,6 @@ function filterJournals() {
   });
 }
 
-// Also rebuild journals when topics change
-const origToggleSel = toggleSel;
 
 // ═══════════════════════════════════════════════════════
 // TAG INPUTS (keywords / blacklist)
@@ -2013,7 +1747,6 @@ function makeTagSystem(inputId, wrapperId, counterId, maxTags, isBlacklist, unit
 
 const kwSystem = makeTagSystem('kw-input', 'kw-wrap', 'kw-counter', LIM.keywords, false, 'keywords');
 const blSystem = makeTagSystem('bl-input', 'bl-wrap', 'bl-counter', null, true);
-const topicPrefSystem = makeTagSystem('topic-pref-input', 'topic-pref-wrap', 'topic-pref-counter', 30, false, 'topics');
 
 // ═══════════════════════════════════════════════════════
 // MODE TOGGLE
@@ -2134,22 +1867,15 @@ document.getElementById('reg-form').addEventListener('submit', async function(e)
           domain:       sanitize(s.domain),
           field:        sanitize(s.field),
           subfields:    sanitizeTags(s.subfields, 3, 200),
-          topic_mains:  sanitizeTags(s.topicMains || [], 200, 200),
           keywords:     sanitizeTags(s.keywords || [], 15, 60),
           kw_blacklist: sanitizeTags(s.kw_blacklist || [], 500, 60)
         }))
       : state.fieldSlots.map(s => ({
           field:        sanitize(s.field),
           subfields:    sanitizeTags(s.subfields, LIM.subfields, 200),
-          topic_mains:  sanitizeTags(s.topicMains || [], 200, 200),
           keywords:     sanitizeTags(s.keywords || [], LIM.keywords, 60),
           kw_blacklist: sanitizeTags(s.kw_blacklist || [], 500, 60)
         })),
-    topics:       sanitizeTags(
-      Array.from(new Set([...state.topics, ...topicPrefSystem.getTags()])),
-      80,
-      200
-    ),
     granularity:  'subfield',
     journal_whitelist: sanitizeTags(state.journalWL, 100, 300),
     journal_blacklist: sanitizeTags(state.journalBL, 100, 300),
