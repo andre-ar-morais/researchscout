@@ -562,56 +562,15 @@ document.getElementById('global-kw-section-label').style.display = 'none';
 let SM = {};   // domain → field → subfield → {j:[journals], k:"keyword|pool"}
 
 async function loadHierarchy() {
-  const overlay   = document.getElementById('loading-overlay');
-  const statusEl  = document.querySelector('.loading-text');
-
-  function setStatus(msg) {
-    if (statusEl) statusEl.textContent = msg;
-  }
-
   try {
-    // ── 1. Fetch ──────────────────────────────────────────────────────────
-    setStatus('Loading taxonomy…');
-    const url = 'subfield_mapping.json';
-    let smRes;
-    try {
-      smRes = await fetch(url, { cache: 'default' });
-    } catch(netErr) {
-      throw new Error(`Network error fetching ${url}: ${netErr.message}`);
-    }
-
-    if (!smRes.ok) {
-      throw new Error(`File not found (HTTP ${smRes.status}): ${url}. Make sure subfield_mapping.json is in the same folder as this HTML file.`);
-    }
-
-    // ── 2. Parse — stream as text first so we get a clear parse error ─────
-    setStatus('Parsing taxonomy data…');
-    const text = await smRes.text();
-    try {
-      SM = JSON.parse(text);
-    } catch(parseErr) {
-      const preview = text.slice(0, 200).replace(/\n/g, '↵');
-      throw new Error(`JSON parse error: ${parseErr.message}. First 200 chars: ${preview}`);
-    }
-
-    if (!SM || typeof SM !== 'object' || Object.keys(SM).length === 0) {
-      throw new Error('subfield_mapping.json parsed but returned an empty object. Re-run create_mapping_files.py.');
-    }
-
-    // ── 3. Build UI ───────────────────────────────────────────────────────
-    setStatus('Building interface…');
+    const smRes = await fetch('subfield_mapping.json');
+    if (!smRes.ok) throw new Error('subfield_mapping.json not found');
+    SM = await smRes.json();
     populateDomains();
-    overlay.classList.add('hidden');
-
+    document.getElementById('loading-overlay').classList.add('hidden');
   } catch(e) {
-    console.error('[loadHierarchy]', e);
-    setStatus(`⚠ ${e.message}`);
-    // Show a retry button
-    const retryBtn = document.createElement('button');
-    retryBtn.textContent = 'Try again';
-    retryBtn.style.cssText = 'margin-top:16px;padding:10px 24px;background:#b8892a;color:#fff;border:none;border-radius:5px;font-size:14px;cursor:pointer;';
-    retryBtn.onclick = () => { overlay.querySelector('.loading-text + button')?.remove(); loadHierarchy(); };
-    statusEl.insertAdjacentElement('afterend', retryBtn);
+    document.querySelector('.loading-text').textContent = 'Error loading taxonomy. Please refresh.';
+    console.error(e);
   }
 }
 
@@ -729,7 +688,7 @@ function renderDomainSlots() {
     const domainSel = document.createElement('select');
     domainSel.style.cssText = 'width:100%;background:#ffffff;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:var(--sans);font-size:14px;color:rgba(28,26,23,.9);appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'8\' viewBox=\'0 0 12 8\'%3E%3Cpath d=\'M1 1l5 5 5-5\' stroke=\'%236b6560\' stroke-width=\'1.5\' fill=\'none\' stroke-linecap=\'round\'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;';
     domainSel.innerHTML = '<option value="">Select domain…</option>';
-    Object.keys(H).sort().forEach(d => {
+    Object.keys(SM).sort().forEach(d => {
       const o = document.createElement('option');
       o.value = o.textContent = d;
       if (d === slot.domain) o.selected = true;
@@ -1002,7 +961,7 @@ function renderFieldSlots() {
       const domainSel = document.createElement('select');
       domainSel.style.cssText = 'width:100%;background:#ffffff;border:1px solid var(--border);border-radius:5px;padding:10px 14px 10px 14px;padding-right:36px;font-family:var(--sans);font-size:14px;color:rgba(28,26,23,.9);appearance:none;';
       domainSel.innerHTML = '<option value="">Select domain...</option>';
-      Object.keys(H).sort().forEach(d => {
+      Object.keys(SM).sort().forEach(d => {
         const o = document.createElement('option');
         o.value = o.textContent = d;
         if (d === slot.domain) o.selected = true;
