@@ -926,7 +926,7 @@ footer {
     <a href="#pricing">Pricing</a>
     <a href="#getstarted">How to subscribe</a>
     <a href="#faq">FAQ</a>
-    <a href="https://billing.stripe.com/p/login/00w00b7ggezr0h2877aEE00" style="font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Manage subscription</a>
+    <a href="https://billing.stripe.com/p/login/00w00b7ggezr0h2877aEE00" title="Use the same email you paid with" style="font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Manage subscription</a>
     <a href="https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01" class="nav-cta stripe-cta-essential">Get early access</a>
   </div>
   <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" onclick="toggleMobileMenu()">
@@ -1032,7 +1032,7 @@ footer {
         <div class="step-num">03</div>
         <div class="step-icon">📬</div>
         <h3>Receive your Friday digest</h3>
-        <p>Every Friday evening, receive a curated selection of papers published during the previous 7 days — including <span style="color: #0f172a; font-weight: 600">direct DOI links, journal metadata, authors and publication date.</span></p>
+        <p>Every Friday morning, receive a curated selection of papers published during the previous 7 days — including <span style="color: #0f172a; font-weight: 600">direct DOI links, journal metadata, authors and publication date.</span></p>
       </div>
     </div>
 
@@ -1392,7 +1392,7 @@ footer {
             When do I receive my digest?
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           </button>
-          <div class="faq-a">Research Scout sends digests every Friday evening. Each edition covers articles published during the previous 7 days across indexed scholarly sources — CrossRef and OpenAlex.</div>
+          <div class="faq-a">Research Scout sends digests every Friday morning. Each edition covers articles published during the previous 7 days across indexed scholarly sources — CrossRef and OpenAlex.</div>
         </div>
         <div class="faq-item">
           <button class="faq-q" onclick="toggleFaq(this)">
@@ -1441,7 +1441,7 @@ footer {
             How do I cancel?
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           </button>
-          <div class="faq-a">Cancel directly from your <a href="https://billing.stripe.com/p/login/00w00b7ggezr0h2877aEE00" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(26,50,112,.2);">Stripe account portal</a>. Log in with your registered e-mail, and cancel the recurring plan. You won't be charged after the current billing period ends and digests will stop the following Friday.</div>
+          <div class="faq-a">Go to the <a href="https://billing.stripe.com/p/login/00w00b7ggezr0h2877aEE00" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(26,50,112,.2);">subscription portal</a> and enter the <strong>same e-mail address you used when you paid</strong>. Stripe will send you a login link — no password needed. Once inside, you can cancel, download invoices, or update your payment method. You won't be charged after the current billing period ends and digests will stop the following Friday.</div>
         </div>
       </div>
 
@@ -1473,8 +1473,8 @@ footer {
     <div class="footer-col">
       <h5>Account</h5>
       <ul>
-        <li><a href="https://billing.stripe.com/p/login/00w00b7ggezr0h2877aEE00">Manage subscription</a></li>
-        <li><a href="https://billing.stripe.com/p/login/00w00b7ggezr0h2877aEE00">Cancel subscription</a></li>
+        <li><a href="https://billing.stripe.com/p/login/00w00b7ggezr0h2877aEE00" title="Use the email you paid with">Manage subscription</a></li>
+        <li><a href="https://billing.stripe.com/p/login/00w00b7ggezr0h2877aEE00" title="Use the email you paid with">Cancel subscription</a></li>
       </ul>
     </div>
   </div>
@@ -1493,7 +1493,7 @@ const PRICING = {
 
   // Stripe checkout links
   stripeEssential:     'https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01',
-  stripeProfessional:  'https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01', // swap for Pro link
+  stripeProfessional:  'https://buy.stripe.com/bJe9AL9oo3UN0h2733aEE04', // swap for Pro link
 
   // Prices displayed
   essential:    { current: '$1.97', original: '$5.97' },
