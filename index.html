@@ -926,7 +926,8 @@ footer {
     <a href="#pricing">Pricing</a>
     <a href="#getstarted">How to subscribe</a>
     <a href="#faq">FAQ</a>
-    <a href="registration.html" class="nav-cta">Get started</a>
+    <a href="https://billing.stripe.com/p/login/00w00b7ggezr0h2877aEE00" style="font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Manage subscription</a>
+    <a href="https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01" class="nav-cta stripe-cta-essential">Get early access</a>
   </div>
   <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" onclick="toggleMobileMenu()">
     <span></span><span></span><span></span>
@@ -940,28 +941,28 @@ footer {
   <a href="#pricing"      onclick="closeMobileMenu()">Pricing</a>
   <a href="#getstarted"   onclick="closeMobileMenu()">How to subscribe</a>
   <a href="#faq"          onclick="closeMobileMenu()">FAQ</a>
-  <a href="registration.html" class="mobile-menu-cta">Get started →</a>
+  <a href="https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01" class="mobile-menu-cta">Get early access →</a>
 </div>
 
 <!-- ═══ HERO ═══ -->
 <section class="hero" id="hero">
   <div class="hero-grid"></div>
-  <div class="hero-eyebrow">Scientific Literature Intelligence</div>
+  <div class="hero-eyebrow">Weekly Research Intelligence</div>
   <h1>
-    The research that matters,<br>
-    <em>delivered to you.</em>
+    This week in<br>
+    <em>your research area.</em>
   </h1>
   <p class="hero-sub">
-    Research Scout scans millions of newly published scientific articles and delivers a curated, keyword-filtered selection straight to your inbox — so you never miss a breakthrough in your field.
+    Every Friday, Research Scout scans newly published papers from the last 7 days, identifies what matches your research interests, and delivers a curated digest directly to your inbox.
   </p>
   <div class="hero-actions">
-    <a href="#pricing" class="btn-primary">Start your subscription</a>
+    <a href="https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01" class="btn-primary">Get early access — $1.97/mo</a>
     <a href="#how" class="btn-ghost">See how it works</a>
   </div>
   <div class="hero-stats">
     <div class="stat">
-      <div class="stat-num" id="stat-articles">4M+</div>
-      <div class="stat-label" id="stat-articles-label">Weekly indexed publications</div>
+      <div class="stat-num" id="stat-articles">200K+</div>
+      <div class="stat-label" id="stat-articles-label">Articles indexed weekly</div>
     </div>
     <div class="stat">
       <div class="stat-num" id="stat-fields">--</div>
@@ -970,10 +971,6 @@ footer {
     <div class="stat">
       <div class="stat-num" id="stat-subfields">--</div>
       <div class="stat-label">Subfields covered</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num" id="stat-latency">48h</div>
-      <div class="stat-label">Latency from publication</div>
     </div>
   </div>
 </section>
@@ -1022,20 +1019,20 @@ footer {
       <div class="step reveal reveal-delay-1">
         <div class="step-num">01</div>
         <div class="step-icon">🗂️</div>
-        <h3>Tell us your field</h3>
-        <p><span style="color: #0f172a; font-weight: 600">Fill in your subscriber profile:</span> select your domain, field, and subfield from our full scientific taxonomy, then add <span style="color: #0f172a; font-weight: 600">up to 20 keywords</span> that define your exact research interest. Takes less than 3 minutes.</p>
+        <h3>Describe what you research</h3>
+        <p>Tell us your field and add the keywords that define your work. <span style="color: #0f172a; font-weight: 600">We map the most relevant journals and subfields automatically</span> — you confirm, exclude, or refine. Takes less than 3 minutes.</p>
       </div>
       <div class="step reveal reveal-delay-2">
         <div class="step-num">02</div>
         <div class="step-icon">⚙️</div>
-        <h3>We filter the literature</h3>
-        <p>Every week our pipeline scans millions of new articles from CrossRef and OpenAlex and <span style="color: #0f172a; font-weight: 600">filters their title against your keywords and chosen field</span>. Only what matches reaches you.</p>
+        <h3>We scan the last 7 days</h3>
+        <p>Every week, Research Scout analyzes newly indexed articles across OpenAlex and CrossRef, <span style="color: #0f172a; font-weight: 600">matching titles, concepts, metadata and journal relevance</span> against your research profile.</p>
       </div>
       <div class="step reveal reveal-delay-3">
         <div class="step-num">03</div>
         <div class="step-icon">📬</div>
-        <h3>Receive your selection</h3>
-        <p>A clean, structured selection arrives in your inbox on Monday morning. Click any title to go straight to the article via DOI. You'll recieve the following data: <span style="color: #0f172a; font-weight: 600">authors, title, journal, publisher, url, DOI, publication date, field classification.</span></p>
+        <h3>Receive your Friday digest</h3>
+        <p>Every Friday evening, receive a curated selection of papers published during the previous 7 days — including <span style="color: #0f172a; font-weight: 600">direct DOI links, journal metadata, authors and publication date.</span></p>
       </div>
     </div>
 
@@ -1044,7 +1041,7 @@ footer {
 		<div style="font-size:32px;opacity:.5">🔧</div>
 		<div style="flex:1">
 		<h3 style="font-family:var(--serif);font-size:22px;font-weight:400;margin-bottom:8px">Refine anytime</h3>
-		<p style="font-size:14px;color:rgba(28,26,23,.55);line-height:1.7;">Getting too much noise? Coverage feels too broad? Simply return to your profile form, enter your e-mail, update your keywords or subfield selection, and resubmit. Changes take effect on the very next weekly send — no need to cancel or resubscribe.</p>
+		<p style="font-size:14px;color:rgba(28,26,23,.55);line-height:1.7;">Getting too much noise? Coverage feels too broad? Adjust your keywords, inferred journals, or excluded subfields anytime. Simply return to your profile form, enter your e-mail, and resubmit. Changes apply to the next Friday digest — no need to cancel or resubscribe.</p>
 		</div>
 	</div>
   </div>
@@ -1055,7 +1052,7 @@ footer {
   <div class="section-inner">
     <div class="reveal">
       <div class="section-tag">Features</div>
-      <h2 class="section-title">Built for <em>researchers,</em><br><strong>by researchers.</strong></h2>
+      <h2 class="section-title">Weekly research intelligence<br><em>that adapts to your work.</em></h2>
       <p class="section-body">The scientific literature never stops growing. Thousands of new papers are published every single day across hundreds of journals — making it practically impossible to keep up with what's relevant to your work without spending hours you don't have. We built Research Scout to solve exactly that problem, because we faced it ourselves in our own research.</p>
     </div>
     <div class="features-layout">
@@ -1103,21 +1100,21 @@ footer {
         <div class="feature-item">
           <div class="feature-icon-wrap">🎯</div>
           <div>
-            <h4>Keyword + taxonomy filtering</h4>
-            <p>Combine subfield-level taxonomy with your own keyword list for surgical precision. Add a blacklist to eliminate irrelevant noise from adjacent topics.</p>
+            <h4>Smart intent-based matching</h4>
+            <p>We infer relevant journals and scientific subfields from your keywords — so you never need to navigate rigid taxonomies. Confirm, exclude, or refine the suggestions in seconds.</p>
           </div>
         </div>
         <div class="feature-item">
           <div class="feature-icon-wrap">🔬</div>
           <div>
-            <h4>Cross-database coverage</h4>
-            <p>We index from both CrossRef and OpenAlex — giving you broader coverage than any single source, including journals not indexed in PubMed or Scopus.</p>
+            <h4>Weekly publication window</h4>
+            <p>Every digest covers only papers published in the previous 7 days, sourced from CrossRef and OpenAlex. Your inbox stays current and manageable — never a backlog.</p>
           </div>
         </div>
         <div class="feature-item">
           <div class="feature-icon-wrap">📐</div>
           <div>
-            <h4>Multi-disciplinary support</h4>
+            <h4>Multi-signal relevance matching</h4>
             <p>Work at the intersection of fields? Select multiple subfields and receive a unified digest covering all of them in one clean document.</p>
           </div>
         </div>
@@ -1139,7 +1136,7 @@ footer {
     <div class="reveal" style="max-width:600px">
       <div class="section-tag">Coverage</div>
       <h2 class="section-title">Every major<br><em>scientific domain</em></h2>
-      <p class="section-body">From medicine to mathematics, from ecology to electrical engineering. If it's being published, we're indexing it.</p>
+      <p class="section-body">From medicine to mathematics, from ecology to electrical engineering. If it was published this week in major scholarly databases, we can find it.</p>
     </div>
     <div class="fields-grid reveal">
       <span class="field-pill highlight">Health Sciences</span>
@@ -1199,14 +1196,14 @@ footer {
               <span style="color:var(--gold);font-weight:700;margin-right:8px;font-size:16px;">›</span>
              <!-- Go to the <a href="checkout.html" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(26,50,112,.2);">pricing page</a> and compare the <span style="color:var(--gold);font-weight:600;">Essential ($5.97/mo)</span> and <span style="color:var(--gold);font-weight:600;">Professional ($9.97/mo)</span> plans
             </li> -->
-			  Go to the <a href="#pricing" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(26,50,112,.2);">pricing section</a> and compare the <span style="color:var(--gold);font-weight:600;">Essential ($5.97/mo)</span> and <span style="color:var(--gold);font-weight:600;">Professional ($9.97/mo)</span> plans
+			  Click below to go directly to the early access checkout — <span style="color:var(--gold);font-weight:600;">$1.97/mo</span>, no plan comparison needed
             <li style="font-size:14px;color:rgba(28,26,23,.7);line-height:1.7;padding-left:16px;position:relative;">
               <span style="color:var(--gold);font-weight:700;margin-right:8px;font-size:16px;">›</span>
               Not sure which to pick? Start with <span style="color:var(--gold);font-weight:600;">Essential</span> — you can upgrade at any time with no interruption to your digest
             </li>
             <li style="font-size:14px;color:rgba(28,26,23,.7);line-height:1.7;padding-left:16px;position:relative;">
               <span style="color:var(--gold);font-weight:700;margin-right:8px;font-size:16px;">›</span>
-              Click <span style="color:var(--gold);font-weight:600;">Start free trial</span> on the plan of your choice to proceed to payment
+              Click <span style="color:var(--gold);font-weight:600;">Get early access</span> to proceed to payment
             </li>
           </ul>
         </div>
@@ -1237,7 +1234,7 @@ footer {
             </li>
             <li style="font-size:14px;color:rgba(28,26,23,.7);line-height:1.7;padding-left:16px;position:relative;">
               <span style="color:var(--gold);font-weight:700;margin-right:8px;font-size:16px;">›</span>
-              Your <span style="color:var(--gold);font-weight:600;">14-day free trial</span> begins immediately — no charge until day 15, and you can cancel before that at no cost
+              Your subscription starts immediately at <span style="color:var(--gold);font-weight:600;">$1.97/mo</span> — cancel anytime from your Stripe dashboard
             </li>
             <li style="font-size:14px;color:rgba(28,26,23,.7);line-height:1.7;padding-left:16px;position:relative;">
               <span style="color:var(--gold);font-weight:700;margin-right:8px;font-size:16px;">›</span>
@@ -1264,7 +1261,7 @@ footer {
             </li>
             <li style="font-size:14px;color:rgba(28,26,23,.7);line-height:1.7;padding-left:16px;position:relative;">
               <span style="color:var(--gold);font-weight:700;margin-right:8px;font-size:16px;">›</span>
-              Select your <span style="color:var(--gold);font-weight:600;">domain</span>, <span style="color:var(--gold);font-weight:600;">field</span>, and <span style="color:var(--gold);font-weight:600;">subfield</span> from the cascading dropdown menus — these define the broad scope of articles you'll receive
+              Select your <span style="color:var(--gold);font-weight:600;">domain</span> and <span style="color:var(--gold);font-weight:600;">field</span>, then add your <span style="color:var(--gold);font-weight:600;">keywords</span> — we automatically map the most relevant subfields and journals from your inputs
             </li>
             <li style="font-size:14px;color:rgba(28,26,23,.7);line-height:1.7;padding-left:16px;position:relative;">
               <span style="color:var(--gold);font-weight:700;margin-right:8px;font-size:16px;">›</span>
@@ -1276,7 +1273,7 @@ footer {
             </li>
             <li style="font-size:14px;color:rgba(28,26,23,.7);line-height:1.7;padding-left:16px;position:relative;">
               <span style="color:var(--gold);font-weight:700;margin-right:8px;font-size:16px;">›</span>
-              Choose your <span style="color:var(--gold);font-weight:600;">delivery format</span>: HTML e-mail only, PDF attachment only, or both
+              Optionally <span style="color:var(--gold);font-weight:600;">refine the suggested subfields and journals</span> — pre-selected based on your keywords, you can remove anything that doesn't fit
             </li>
             <li style="font-size:14px;color:rgba(28,26,23,.7);line-height:1.7;padding-left:16px;position:relative;">
               <span style="color:var(--gold);font-weight:700;margin-right:8px;font-size:16px;">›</span>
@@ -1294,12 +1291,12 @@ footer {
         <div style="padding:36px 40px;">
           <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:6px;flex-wrap:wrap;">
             <h3 style="font-family:var(--serif);font-size:22px;font-weight:400;">Receive your first digest</h3>
-            <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Every Monday · automatic</span>
+            <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Every Friday · automatic</span>
           </div>
           <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:16px;">
             <li style="font-size:14px;color:rgba(28,26,23,.7);line-height:1.7;padding-left:16px;position:relative;">
               <span style="color:var(--gold);font-weight:700;margin-right:8px;font-size:16px;">›</span>
-              Your first digest arrives on the <span style="color:var(--gold);font-weight:600;">next Monday</span> after your profile is complete — no action needed on your part
+              Your first digest arrives on the <span style="color:var(--gold);font-weight:600;">next Friday</span> after your profile is complete — no action needed on your part
             </li>
             <li style="font-size:14px;color:rgba(28,26,23,.7);line-height:1.7;padding-left:16px;position:relative;">
               <span style="color:var(--gold);font-weight:700;margin-right:8px;font-size:16px;">›</span>
@@ -1322,8 +1319,8 @@ footer {
     <!-- CTA -->
     <div class="reveal" style="text-align:center;margin-top:48px;">
       <!-- <a href="checkout.html" class="btn-primary">Choose your plan →</a> -->
-	  <a href="#pricing" class="btn-primary">Choose your plan →</a>
-      <p style="margin-top:16px;font-size:12px;color:var(--muted);">14-day free trial · No card required to browse · Cancel anytime</p>
+	  <a href="https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01" class="btn-primary">Get early access — $1.97/mo →</a>
+      <p style="margin-top:16px;font-size:12px;color:var(--muted);">Early access · $1.97/mo · Cancel anytime</p>
     </div>
 
   </div>
@@ -1335,41 +1332,49 @@ footer {
     <div class="reveal" style="text-align:center">
       <div class="section-tag">Pricing</div>
       <h2 class="section-title">Simple, <em>transparent</em> pricing</h2>
-      <p class="section-body" style="margin:16px auto 0;text-align:center">No hidden fees. No annual lock-in. Cancel anytime.</p>
+      <p class="section-body" style="margin:16px auto 0;text-align:center">Receive one curated digest every Friday, built from the previous week's scientific publications.</p>
     </div>
-    <div class="pricing-grid reveal">
+    <!-- Early access badge -->
+    <div id="promo-badge" style="text-align:center;margin-bottom:24px">
+      <span style="display:inline-block;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);color:#b91c1c;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:6px 16px;border-radius:100px;">
+        ◆ Early Access — Limited time
+      </span>
+    </div>
 
-      <!-- Essential -->
+    <div class="pricing-grid reveal">
+      <!-- Essential Early Access -->
       <div class="pricing-card" style="display:flex;flex-direction:column;">
         <div class="pricing-tier">Essential</div>
-        <div class="pricing-price"><sup>$</sup>5<span style="font-size:36px">.97</span></div>
-        <div class="pricing-period">per month, billed monthly</div>
+        <div id="price-essential-old" style="margin:8px 0 2px;font-size:13px;color:var(--muted);text-decoration:line-through">$5.97 / mo</div>
+        <div class="pricing-price" id="price-essential-current"><sup>$</sup>1<span style="font-size:36px">.97</span></div>
+        <div class="pricing-period">per month · early access rate</div>
         <div class="pricing-divider"></div>
         <ul class="pricing-features" style="flex:1;">
           <li>1 domain, 1 field, up to 3 subfields</li>
-          <li>Up to 10 keywords of interest</li>
-          <li>Up to 10 blacklist keywords</li>
-          <li>Weekly digest — articles in email with DOI links</li>
+          <li>Up to 10 keywords + blacklist</li>
+          <li>Weekly digest every Friday — articles with DOI links</li>
+          <li>Multi-signal relevance matching</li>
         </ul>
-        <a href="registration.html?plan=essential" class="btn-pricing btn-pricing-ghost" style="margin-top:auto;">Get Essential</a>
+        <a id="cta-essential" href="https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01" class="btn-pricing btn-pricing-ghost stripe-cta-essential" style="margin-top:auto;">Get Essential →</a>
       </div>
 
-      <!-- Professional -->
+      <!-- Professional Early Access -->
       <div class="pricing-card featured" style="display:flex;flex-direction:column;">
-                <div class="pricing-tier">Professional</div>
-        <div class="pricing-price"><sup>$</sup>9<span style="font-size:36px">.97</span></div>
-        <div class="pricing-period">per month, billed monthly</div>
+        <div class="pricing-tier">Professional</div>
+        <div id="price-professional-old" style="margin:8px 0 2px;font-size:13px;color:var(--muted);text-decoration:line-through">$9.97 / mo</div>
+        <div class="pricing-price" id="price-professional-current"><sup>$</sup>5<span style="font-size:36px">.97</span></div>
+        <div class="pricing-period">per month · early access rate</div>
         <div class="pricing-divider"></div>
         <ul class="pricing-features" style="flex:1;">
           <li class="pro-extra"><strong>Up to 3 domains, 3 fields &amp; 9 subfields</strong></li>
-          <li class="pro-extra"><strong>Up to 30 keywords of interest (10 per domain)</strong></li>
-          <li class="pro-extra"><strong>Unlimited blacklist keywords</strong></li>
-          <li class="pro-extra"><strong>PDF attachment with full article list &amp; DOI links</strong></li>
+          <li class="pro-extra"><strong>Up to 30 keywords (10 per domain) + blacklist</strong></li>
+          <li class="pro-extra"><strong>Weekly digest every Friday — articles with DOI links</strong></li>
+          <li class="pro-extra"><strong>Multi-signal relevance matching</strong></li>
         </ul>
-        <a href="registration.html?plan=professional" class="btn-pricing btn-pricing-gold" style="margin-top:auto;">Get Professional</a>
+        <a id="cta-professional" href="https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01" class="btn-pricing btn-pricing-gold stripe-cta-professional" style="margin-top:auto;">Get Professional →</a>
       </div>
     </div>
-    <p class="pricing-note">All plans include a <strong>14-day free trial</strong>. No credit card required to start. <a href="#faq">Questions? See FAQ →</a></p>
+    <p class="pricing-note" style="text-align:center;">Early access rates locked in as long as you stay subscribed. Cancel anytime. <a href="#faq">Questions? See FAQ →</a></p>
   </div>
 </section>
 
@@ -1384,6 +1389,20 @@ footer {
       <div class="faq-list reveal">
         <div class="faq-item">
           <button class="faq-q" onclick="toggleFaq(this)">
+            When do I receive my digest?
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </button>
+          <div class="faq-a">Research Scout sends digests every Friday evening. Each edition covers articles published during the previous 7 days across indexed scholarly sources — CrossRef and OpenAlex.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            What if nothing matches my keywords this week?
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </button>
+          <div class="faq-a">If no exact matches are found, Research Scout automatically expands the discovery scope and surfaces related high-relevance publications from adjacent topics — so every digest remains valuable, even in quieter publishing weeks.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
             What databases do you index?
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           </button>
@@ -1394,7 +1413,7 @@ footer {
             How current is the data?
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           </button>
-          <div class="faq-a">Our pipeline runs weekly and captures articles published in the 7 days prior to each Monday send. Most articles appear within 24–48 hours of their official publication date.</div>
+          <div class="faq-a">Our pipeline runs weekly and captures articles published in the 7 days prior to each Friday send. Most articles appear within 24–48 hours of their official publication date.</div>
         </div>
         <div class="faq-item">
           <button class="faq-q" onclick="toggleFaq(this)">
@@ -1422,15 +1441,15 @@ footer {
             How do I cancel?
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           </button>
-          <div class="faq-a">Simply e-mail us at <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dab4bfa2afa9aabbaabfa8a99abdb7bbb3b6f4b9b5b7">[email&#160;protected]</a> with your registered address, or use the unsubscribe link at the bottom of any weekly send. You won't be charged again after cancellation.</div>
+          <div class="faq-a">Cancel directly from your <a href="https://billing.stripe.com/p/login/00w00b7ggezr0h2877aEE00" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(26,50,112,.2);">Stripe account portal</a>. Log in with your registered e-mail, and cancel the recurring plan. You won't be charged after the current billing period ends and digests will stop the following Friday.</div>
         </div>
       </div>
 
       <div class="faq-cta-box reveal">
         <h3>Ready to stay<br><em>ahead of the curve?</em></h3>
-        <p>Join researchers from over 40 countries who receive Research Scout every Monday. Set up takes under 3 minutes.</p>
-        <a href="registration.html" class="btn-primary" style="display:inline-block">Create your profile →</a>
-        <div style="margin-top:16px;font-size:12px;color:var(--muted)">14-day free trial · No card required · Cancel anytime</div>
+        <p>Join researchers from over 40 countries who receive Research Scout every Friday. Set up takes under 3 minutes.</p>
+        <a href="https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01" class="btn-primary" style="display:inline-block">Get early access →</a>
+        <div style="margin-top:16px;font-size:12px;color:var(--muted)">Early access · $1.97/mo · Cancel anytime</div>
       </div>
     </div>
   </div>
@@ -1449,25 +1468,84 @@ footer {
         <li><a href="#how">How it works</a></li>
         <li><a href="#features">Features</a></li>
         <li><a href="#pricing">Pricing</a></li>
-        <li><a href="registration.html">Register</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h5>Company</h5>
+      <h5>Account</h5>
       <ul>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Coverage</a></li>
-        <li><a href="#">Privacy Policy</a></li>
-        <li><a href="#">Terms of Service</a></li>
-        <li><a href="/cdn-cgi/l/email-protection#93fdf6ebe6e0e3f2e3f6e1e0d3f4fef2faffbdf0fcfe">Contact</a></li>
+        <li><a href="https://billing.stripe.com/p/login/00w00b7ggezr0h2877aEE00">Manage subscription</a></li>
+        <li><a href="https://billing.stripe.com/p/login/00w00b7ggezr0h2877aEE00">Cancel subscription</a></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
     <span>© 2025 Research Scout. All rights reserved.</span>
-    <span>Data sourced from CrossRef & OpenAlex under open licenses.</span>
+    <span style="font-size:11px;color:rgba(80,75,65,.5)">Data sourced from CrossRef &amp; OpenAlex under open licenses.</span>
   </div>
 </footer>
+
+<script>
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║  PRICING CONFIG — edit this block when the promo period ends    ║
+// ╚══════════════════════════════════════════════════════════════════╝
+const PRICING = {
+  earlyAccess: true,   // ← set to FALSE when promo ends
+
+  // Stripe checkout links
+  stripeEssential:     'https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01',
+  stripeProfessional:  'https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01', // swap for Pro link
+
+  // Prices displayed
+  essential:    { current: '$1.97', original: '$5.97' },
+  professional: { current: '$5.97', original: '$9.97' },
+
+  // Badge and CTA copy
+  badge:        'Early Access — Limited time',   // hidden when earlyAccess=false
+  cta:          'Get early access →',
+  ctaNormal:    'Subscribe →',
+};
+
+// ── Applies PRICING config to all relevant DOM elements on page load ─────
+document.addEventListener('DOMContentLoaded', () => {
+  const ea = PRICING.earlyAccess;
+
+  // Badge visibility
+  const badge = document.getElementById('promo-badge');
+  if (badge) badge.style.display = ea ? 'block' : 'none';
+
+  // Essential card
+  const essOld = document.getElementById('price-essential-old');
+  const essCur = document.getElementById('price-essential-current');
+  const essCta = document.getElementById('cta-essential');
+  if (essOld) essOld.style.display = ea ? '' : 'none';
+  if (essCur) essCur.innerHTML = PRICING.essential.current.replace('$', '<sup>$</sup>').replace(/(\d+)\.(\d+)/, '$1<span style="font-size:36px">.$2</span>');
+  if (essCta) { essCta.href = PRICING.stripeEssential; essCta.textContent = ea ? PRICING.cta : PRICING.ctaNormal; }
+
+  // Professional card
+  const proOld = document.getElementById('price-professional-old');
+  const proCur = document.getElementById('price-professional-current');
+  const proCta = document.getElementById('cta-professional');
+  if (proOld) proOld.style.display = ea ? '' : 'none';
+  if (proCur) proCur.innerHTML = PRICING.professional.current.replace('$', '<sup>$</sup>').replace(/(\d+)\.(\d+)/, '$1<span style="font-size:36px">.$2</span>');
+  if (proCta) { proCta.href = PRICING.stripeProfessional; proCta.textContent = ea ? PRICING.cta : PRICING.ctaNormal; }
+
+  // Nav + hero CTA links
+  document.querySelectorAll('.stripe-cta-essential').forEach(el => {
+    el.href = PRICING.stripeEssential;
+    if (el.classList.contains('nav-cta')) el.textContent = ea ? 'Get early access' : 'Subscribe';
+  });
+  document.querySelectorAll('.stripe-cta-professional').forEach(el => {
+    el.href = PRICING.stripeProfessional;
+  });
+
+  // Hero btn-primary text
+  const heroCta = document.querySelector('.hero-actions .btn-primary');
+  if (heroCta) {
+    heroCta.href = PRICING.stripeEssential;
+    heroCta.textContent = ea ? `Get early access — ${PRICING.essential.current}/mo` : `Subscribe — ${PRICING.essential.current}/mo`;
+  }
+});
+</script>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ── FAQ accordion ──────────────────────────────────────────
@@ -1511,8 +1589,7 @@ function closeMobileMenu() {
 // -- Homepage metrics config
 const METRICS_CONFIG = {
   // Keep static values now; flip `useWeeklyFile` later.
-  staticArticlesText: '500K+',
-  staticLatencyHours: 48,
+  staticArticlesText: '200K+',
   useWeeklyFile: false,
   weeklyCandidates: ['weekly_summary.json', 'weekly_stats.json', 'current_weekly.json']
 };
@@ -1520,7 +1597,6 @@ const METRICS_CONFIG = {
 // -- Dynamic homepage metrics from data files
 async function loadHomepageMetrics() {
   document.getElementById('stat-articles').textContent = METRICS_CONFIG.staticArticlesText;
-  document.getElementById('stat-latency').textContent = `${METRICS_CONFIG.staticLatencyHours}h`;
 
   try {
     const hierarchyRes = await fetch('hierarchy.json');
@@ -1557,9 +1633,6 @@ async function loadHomepageMetrics() {
       if (typeof weekly.articles_indexed_weekly === 'number') {
         document.getElementById('stat-articles').textContent =
           `${Math.round(weekly.articles_indexed_weekly / 1000000)}M+`;
-      }
-      if (typeof weekly.latency_hours === 'number') {
-        document.getElementById('stat-latency').textContent = `${weekly.latency_hours}h`;
       }
       break;
     } catch (_) {
