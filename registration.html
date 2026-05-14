@@ -1784,7 +1784,10 @@ function setMode(mode) {
   document.getElementById('btn-update').classList.toggle('active', mode === 'update');
   document.getElementById('update-notice').style.display = mode === 'update' ? 'block' : 'none';
   const btn = document.getElementById('submit-btn');
-  btn.textContent = mode === 'new' ? 'Register & Subscribe' : 'Save Updated Preferences';
+  btn.textContent = mode === 'new' ? 'Register & Continue to Payment' : 'Save Updated Preferences';
+  document.querySelector('.submit-note').textContent = mode === 'new'
+    ? "After submitting, you'll be redirected to complete your payment."
+    : "Changes apply to the next Friday digest.";
   btn.classList.toggle('update-mode', mode === 'update');
 }
 
@@ -1984,15 +1987,21 @@ document.getElementById('reg-form').addEventListener('submit', async function(e)
     return;
   }
 
-  document.getElementById('reg-form').style.display = 'none';
-  const msg = document.getElementById('success-msg');
-  msg.style.display = 'block';
-  document.getElementById('success-title').textContent =
-    currentMode === 'new' ? "You're subscribed." : 'Preferences updated.';
-  document.getElementById('success-body').textContent =
-    currentMode === 'new'
-      ? `Welcome, ${record.name.split(' ')[0]}. Your first digest arrives next Monday.`
-      : `Your preferences for ${record.email} have been updated.`;
+  if (currentMode === 'update') {
+    // Returning customer — just show success, no payment needed
+    document.getElementById('reg-form').style.display = 'none';
+    const msg = document.getElementById('success-msg');
+    msg.style.display = 'block';
+    document.getElementById('success-title').textContent = 'Preferences updated.';
+    document.getElementById('success-body').textContent =
+      `Your preferences for ${record.email} have been updated. Changes apply to the next Friday digest.`;
+  } else {
+    // New subscriber — redirect to Stripe checkout
+    const stripeUrl = (record.plan === 'professional')
+      ? 'https://buy.stripe.com/bJe9AL9oo3UN0h2733aEE04'
+      : 'https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01';
+    window.location.href = stripeUrl;
+  }
 });
 
 // ═══════════════════════════════════════════════════════

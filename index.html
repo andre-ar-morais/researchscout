@@ -927,7 +927,7 @@ footer {
     <a href="#getstarted">How to subscribe</a>
     <a href="#faq">FAQ</a>
     <a href="https://billing.stripe.com/p/login/00w00b7ggezr0h2877aEE00" title="Use the same email you paid with" style="font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Manage subscription</a>
-    <a href="https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01" class="nav-cta stripe-cta-essential">Get started</a>
+    <a href="registration.html?plan=essential" class="nav-cta">Get started</a>
   </div>
   <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" onclick="toggleMobileMenu()">
     <span></span><span></span><span></span>
@@ -941,7 +941,7 @@ footer {
   <a href="#pricing"      onclick="closeMobileMenu()">Pricing</a>
   <a href="#getstarted"   onclick="closeMobileMenu()">How to subscribe</a>
   <a href="#faq"          onclick="closeMobileMenu()">FAQ</a>
-  <a href="https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01" class="mobile-menu-cta">Get started →</a>
+  <a href="registration.html?plan=essential" class="mobile-menu-cta">Get started →</a>
 </div>
 
 <!-- ═══ HERO ═══ -->
@@ -956,7 +956,7 @@ footer {
     Every Friday, Research Scout scans newly published papers from the last 7 days, identifies what matches your research interests, and delivers a curated digest directly to your inbox.
   </p>
   <div class="hero-actions">
-    <a href="https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01" class="btn-primary">Start your free trial →</a>
+    <a href="registration.html?plan=essential" class="btn-primary">Start your free trial →</a>
     <a href="#how" class="btn-ghost">See how it works</a>
   </div>
   <div class="hero-stats">
@@ -1203,7 +1203,7 @@ footer {
             </li>
             <li style="font-size:14px;color:rgba(28,26,23,.7);line-height:1.7;padding-left:16px;position:relative;">
               <span style="color:var(--gold);font-weight:700;margin-right:8px;font-size:16px;">›</span>
-              Click <span style="color:var(--gold);font-weight:600;">Get started</span> to proceed to payment
+              Click <span style="color:var(--gold);font-weight:600;">Get started</span> to fill in your research profile
             </li>
           </ul>
         </div>
@@ -1318,7 +1318,7 @@ footer {
     <!-- CTA -->
     <div class="reveal" style="text-align:center;margin-top:48px;">
       <!-- <a href="checkout.html" class="btn-primary">Choose your plan →</a> -->
-	  <a href="https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01" class="btn-primary">Start your free trial →</a>
+	  <a href="registration.html?plan=essential" class="btn-primary">Start your free trial →</a>
       <p style="margin-top:16px;font-size:12px;color:var(--muted);">14-day free trial · No card required · Cancel anytime</p>
     </div>
 
@@ -1407,7 +1407,7 @@ footer {
       <div class="faq-cta-box reveal">
         <h3>Ready to stay<br><em>ahead of the curve?</em></h3>
         <p>Join researchers from over 40 countries who receive Research Scout every Friday. Set up takes under 3 minutes.</p>
-        <a href="https://buy.stripe.com/5kQ28j9oo62V4xi5YZaEE01" class="btn-primary" style="display:inline-block">Get started →</a>
+        <a href="registration.html?plan=essential" class="btn-primary" style="display:inline-block">Get started →</a>
         <div style="margin-top:16px;font-size:12px;color:var(--muted)">14-day free trial · No card required · Cancel anytime</div>
       </div>
     </div>
@@ -1478,7 +1478,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const essCta = document.getElementById('cta-essential');
   if (essOld) essOld.style.display = ea ? '' : 'none';
   if (essCur) essCur.innerHTML = PRICING.essential.current.replace('$', '<sup>$</sup>').replace(/(\d+)\.(\d+)/, '$1<span style="font-size:36px">.$2</span>');
-  if (essCta) { essCta.href = PRICING.stripeEssential; essCta.textContent = ea ? PRICING.cta : PRICING.ctaNormal; }
+  if (essCta) { essCta.href = "registration.html?plan=essential"; essCta.textContent = PRICING.ctaNormal; }
 
   // Professional card
   const proOld = document.getElementById('price-professional-old');
@@ -1486,7 +1486,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const proCta = document.getElementById('cta-professional');
   if (proOld) proOld.style.display = ea ? '' : 'none';
   if (proCur) proCur.innerHTML = PRICING.professional.current.replace('$', '<sup>$</sup>').replace(/(\d+)\.(\d+)/, '$1<span style="font-size:36px">.$2</span>');
-  if (proCta) { proCta.href = PRICING.stripeProfessional; proCta.textContent = ea ? PRICING.cta : PRICING.ctaNormal; }
+  if (proCta) { proCta.href = "registration.html?plan=professional"; proCta.textContent = PRICING.ctaNormal; }
 
   // Nav + hero CTA links
   document.querySelectorAll('.stripe-cta-essential').forEach(el => {
